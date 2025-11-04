@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calcy Hub - Your Complete Calculator Solution</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <div class="logo-icon">🧮</div>
+        <span class="logo-name">Calcy Hub</span>
+      </div>
+      <div class="navbar-search">
+        <input
+          type="text"
+          placeholder="Search calculators..."
+          class="search-input"
+        />
+        <button class="search-btn">Search</button>
+      </div>
+      <div class="navbar-icons">
+        <div class="navbar-item">
+          <span class="icon-symbol">⚙️</span>
+          <span class="icon-name">Settings</span>
+        </div>
+        <div class="navbar-item">
+          <span class="icon-symbol">🌓</span>
+          <span class="icon-name">Theme</span>
+        </div>
+        <div class="navbar-item">
+          <span class="icon-symbol">❓</span>
+          <span class="icon-name">Help</span>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main-content">
+      <aside class="categories-section">
+        <h2>Categories</h2>
+        <ul class="categories-list">
+          <li data-category="Finance">Finance</li>
+          <li data-category="Health & Fitness">Health & Fitness</li>
+          <li data-category="Math & Numbers">Math & Numbers</li>
+          <li data-category="Unit Converters">Unit Converters</li>
+          <li data-category="Education & Learning">Education & Learning</li>
+          <li data-category="Daily Life Tools">Daily Life Tools</li>
+          <li data-category="Technology & Digital">Technology & Digital</li>
+          <li data-category="Construction & Engineering">Construction & Engineering</li>
+          <li data-category="Fun & Miscellaneous">Fun & Miscellaneous</li>
+        </ul>
+      </aside>
+      
+      <section class="right-section">
+        <!-- Home Content -->
+        <div class="home-content">
+          <h2>Popular Calculators</h2>
+          <div class="popular-tools">
+            <div class="tool-card">Loan Calculator</div>
+            <div class="tool-card">BMI Calculator</div>
+            <div class="tool-card">Unit Converter</div>
+            <div class="tool-card">Age Calculator</div>
+            <div class="tool-card">Miles To Steps</div>
+            <div class="tool-card">Grade Calculator</div>
+          </div>
+
+          <h2>Key Features</h2>
+          <ul class="features-list">
+            <li>✨ Easy to use interface</li>
+            <li>📂 Multiple categories</li>
+            <li>⚡ Fast and accurate results</li>
+            <li>🎨 Modern design</li>
+          </ul>
+        </div>
+
+        <!-- Finance Category -->
+        <div class="category-content" data-category="Finance">
+          <div class="category-header">
+            <button class="back-button">← Back</button>
+            <h2 class="category-title">Finance</h2>
+          </div>
+          <div class="calculators-grid">
+            <a class="calculator-card" href="categories/finance/Loan-EMI-Calculator.html">
+              <div class="calculator-name">Loan / EMI Calculator</div>
+            </a>
+            <a class="calculator-card" href="categories/finance/Simple-Compound-Interest-Calculator.html">
+              <div class="calculator-name">Compound Interest Calculator</div>
+            </a>
+            <a class="calculator-card" href="categories/finance/SIP-Mutual-Fund-Calculator.html">
+              <div class="calculator-name">SIP / Mutual Fund Calculator</div>
+            </a>
+            <a class="calculator-card" href="categories/finance/RetirementCalculator.html">
+              <div class="calculator-name">Retirement Calculator</div>
+            </a>
+            <a class="calculator-card" href="categories/finance/Income Tax Calculator.html">
+              <div class="calculator-name">Income Tax Calculator</div>
+            </a>
+            <a class="calculator-card" href="categories/finance/currency-converter.html">
+              <div class="calculator-name">Currency Converter</div>
+            </a>
+            <a class="calculator-card" href="categories/finance/Salary Hourly Wage Converter.html">
+              <div class="calculator-name">Salary / Hourly Wage Converter</div>
+            </a>
+            <a class="calculator-card" href="categories/finance/GST VAT Calculator.html">
+              <div class="calculator-name">GST / VAT Calculator</div>
+            </a>
+            <a class="calculator-card" href="categories/finance/Investment Return Calculator.html">
+              <div class="calculator-name">Investment Return Calculator</div>
+            </a>
+            <a class="calculator-card" href="categories/finance/Inflation Calculator.html">
+              <div class="calculator-name">Inflation Calculator</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Health & Fitness Category -->
+        <div class="category-content" data-category="Health & Fitness">
+          <div class="category-header">
+            <button class="back-button">← Back</button>
+            <h2 class="category-title">Health & Fitness</h2>
+          </div>
+          <div class="calculators-grid">
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">BMI Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">BMR (Basal Metabolic Rate) Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Calorie Burn Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Daily Calorie Needs Calculator</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Ideal Weight Calculator</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Body Fat % Calculator</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Steps ↔ Miles ↔ KM Converter</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Water Intake Calculator</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Heart Rate Zone Calculator</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Pregnancy Due Date Calculator</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Math & Numbers Category -->
+        <div class="category-content" data-category="Math & Numbers">
+          <div class="category-header">
+            <button class="back-button">← Back</button>
+            <h2 class="category-title">Math & Numbers</h2>
+          </div>
+          <div class="calculators-grid">
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Percentage Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Fraction Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Area & Volume Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Random Number Generator</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Ratio Calculator</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Proportion Calculator</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Average Calculator</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Prime Number Checker</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">LCM / HCF Calculator</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Exponent & Power Calculator</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Logarithm Calculator</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Decimal ↔ Fraction Converter</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Binary ↔ Decimal ↔ Hex ↔ Octal Converter</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Matrix Calculator (Addition, Multiplication, Determinant)</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Equation Solver (linear, quadratic)</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Scientific Calculator (basic version)</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Unit Converters Category -->
+        <div class="category-content" data-category="Unit Converters">
+          <div class="category-header">
+            <button class="back-button">← Back</button>
+            <h2 class="category-title">Unit Converters</h2>
+          </div>
+          <div class="calculators-grid">
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Length Converter</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Weight Converter</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Temperature Converter</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Time Zone Converter</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Time Zone Converter</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Time Zone Converter</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Time Zone Converter</div>
+            </a>
+
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Time Zone Converter</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Education & Learning Category -->
+        <div class="category-content" data-category="Education & Learning">
+          <div class="category-header">
+            <button class="back-button">← Back</button>
+            <h2 class="category-title">Education & Learning</h2>
+          </div>
+          <div class="calculators-grid">
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Grade Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Study Time Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Essay Word Counter</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Daily Life Tools Category -->
+        <div class="category-content" data-category="Daily Life Tools">
+          <div class="category-header">
+            <button class="back-button">← Back</button>
+            <h2 class="category-title">Daily Life Tools</h2>
+          </div>
+          <div class="calculators-grid">
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Age Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Date Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Time Duration Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Miles To Steps Converter</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Technology & Digital Category -->
+        <div class="category-content" data-category="Technology & Digital">
+          <div class="category-header">
+            <button class="back-button">← Back</button>
+            <h2 class="category-title">Technology & Digital</h2>
+          </div>
+          <div class="calculators-grid">
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">File Size Converter</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Download Time Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Screen Resolution Calculator</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Construction & Engineering Category -->
+        <div class="category-content" data-category="Construction & Engineering">
+          <div class="category-header">
+            <button class="back-button">← Back</button>
+            <h2 class="category-title">Construction & Engineering</h2>
+          </div>
+          <div class="calculators-grid">
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Concrete Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Lumber Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Paint Calculator</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Fun & Miscellaneous Category -->
+        <div class="category-content" data-category="Fun & Miscellaneous">
+          <div class="category-header">
+            <button class="back-button">← Back</button>
+            <h2 class="category-title">Fun & Miscellaneous</h2>
+          </div>
+          <div class="calculators-grid">
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Gaming Session Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Pizza Party Calculator</div>
+            </a>
+            <a class="calculator-card" href="#">
+              <div class="calculator-name">Coffee Cost Calculator</div>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="info-section">
+      <p>
+        Calculators are more than just tools for crunching numbers—they empower
+        us to solve everyday problems, make smart financial decisions, and
+        explore the wonders of mathematics. From budgeting and health tracking
+        to scientific research and engineering, calculators simplify complex
+        tasks and help us understand the world around us. Did you know the first
+        electronic calculator was invented in the 1960s, revolutionizing how
+        people approached calculations? Today, online calculators offer instant
+        results, interactive features, and accessibility for everyone. Discover
+        how Calcy Hub can make your calculations easier, faster, and more fun!
+      </p>
+      <p>
+        Fun fact: The world's smallest calculator fits on a keychain, while the
+        largest can be found in science museums! Modern calculators can handle
+        everything from currency conversion to advanced statistics, making them
+        essential for students, professionals, and anyone curious about numbers.
+        With Calcy Hub, you can access specialized calculators for finance,
+        health, units, and more—all in one place. Stay tuned for new features
+        and tools designed to make your life simpler and smarter!
+      </p>
+    </footer>
+
+    <div class="site-footer">
+      <div class="footer-social">
+        <a href="#" class="social-icon" title="Facebook">📘</a>
+        <a href="#" class="social-icon" title="Twitter">🐦</a>
+        <a href="#" class="social-icon" title="Instagram">📷</a>
+        <a href="#" class="social-icon" title="LinkedIn">💼</a>
+      </div>
+      <div class="footer-text">&copy; 2025 Calcy Hub. All rights reserved.</div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
