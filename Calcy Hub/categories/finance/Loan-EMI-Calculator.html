@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loan EMI Calculator 💰 - Calculate Your Monthly Payments</title>
+    <meta name="description" content="Modern Neumorphic Loan EMI Calculator with charts, FD comparison, and detailed breakdown. Calculate monthly EMI, total interest, and payback date instantly."/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-bg: #e0e5ec;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #e0e5ec;
+        color: #333;
+        padding: 10px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Top Bar */
+      .header {
+        background: var(--primary-bg);
+        
+        padding: 10px 12px;
+        border: 1px solid #9aa3af;
+        border-radius: 10px;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: nowrap;
+        /* position: sticky;
+        top: 8px;
+        z-index: 100; */
+      }
+
+      .back-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        padding: 8px 12px;
+        border-radius: 10px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        color: #555;
+        font-size: 12px;
+        transition: all 0.3s;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .back-btn:hover {
+        box-shadow: inset 3px 3px 7px #a3b1c6, inset -3px -3px 7px #ffffff;
+      }
+
+      .back-btn:active {
+        box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+      }
+
+      .header-center {
+        flex: 1;
+        text-align: center;
+        min-width: 0;
+      }
+
+      .header-center h1 {
+        font-size: 16px;
+        margin-bottom: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+
+      .icon-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .icon-btn:active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      /* Main Content */
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      /* Card Style */
+      .card {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 15px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .card h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+        color: #2c502e;
+      }
+
+      /* Input Groups */
+      .input-group {
+        margin-bottom: 12px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #212121;
+        font-size: 13px;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      input[type="number"],
+      input[type="date"],
+      select {
+        width: 100%;
+        padding: 7px 15px;
+        border: none;
+        border-radius: 10px;
+        border: 1px solid #9aa3af;
+        background: var(--primary-bg);
+        box-shadow: inset 0px 0px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        font-size: 14px;
+        color: #333;
+        transition: all 0.3s;
+      }
+
+      input[type="number"]:focus,
+      input[type="date"]:focus,
+      select:focus {
+        outline: none;
+        box-shadow: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+      }
+
+      .range-container {
+        margin-top: 10px;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 8px;
+        border-radius: 5px;
+        border: 1px solid #9aa3af;
+        background: var(--primary-bg);
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+        outline: none;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--primary-bg);
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--primary-bg);
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        border: none;
+      }
+
+      /* Toggle Switch */
+      .toggle-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .toggle-btn {
+        flex: 1;
+        min-width: 90px;
+        padding: 7px 15px;
+        border: none;
+        border-radius: 10px;
+        border: 1px solid #9aa3afdf;
+        background: var(--primary-bg);
+        box-shadow: 0px 0px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        cursor: pointer;
+        font-size: 13px;
+        color: #555;
+        transition: all 0.3s;
+      }
+
+      .toggle-btn.active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        color: #3498db;
+        font-weight: 600;
+        animation: pulse 3s infinite;
+      }
+
+      /* Pulse animation for active button */
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        }
+        50% {
+          transform: scale(1.01);
+          box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        }
+      }
+
+      /* Buttons */
+      .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .calculate-btn {
+        flex: 2;
+        min-width: 150px;
+        padding: 14px 30px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(145deg, #27353fd3, #236895);
+        color: var(--primary-bg);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .calculate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 8px 8px 16px #a3b1c6, -8px -8px 16px #ffffff;
+      }
+
+      .calculate-btn:active {
+        transform: translateY(0);
+        box-shadow: inset 2px 2px 8px #2471a3, inset -4px -4px 8px #5dade2;
+      }
+
+      .reset-btn {
+        flex: 1;
+        min-width: 100px;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 12px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .reset-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+
+      .reset-btn:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+
+      /* Results */
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .result-item {
+        background: var(--primary-bg);
+        padding: 10px;
+        border-radius: 12px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        text-align: center;
+      }
+
+      .result-label {
+        font-size: 9px;
+        color: #777;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .result-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2c3e50;
+        word-break: break-word;
+      }
+
+      /* Charts */
+      .charts-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .chart-wrapper {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 9px 9px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .chart-wrapper h3 {
+        margin-bottom: 15px;
+        color: #2c3e50;
+        font-size: 16px;
+      }
+
+      .chart-wrapper canvas {
+        max-height: 150px;
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .action-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 140px;
+        justify-content: center;
+      }
+
+      .action-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+
+      /* Info Cards */
+      .info-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .info-card {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid #9aa3af;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .info-card h3 {
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 16px;
+      }
+
+      .info-card p,
+      .info-card ul {
+        color: #555;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+
+      .info-card ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .info-card li {
+        padding-left: 20px;
+        position: relative;
+        margin-bottom: 8px;
+      }
+
+      .info-card li:before {
+        content: "•";
+        position: absolute;
+        left: 8px;
+        color: #3498db;
+        font-weight: bold;
+      }
+
+      /* Hidden Sections */
+      .hidden {
+        display: none;
+      }
+
+      .comparison-section,
+      .calculation-steps {
+        margin-top: 20px;
+        padding: 15px;
+        background: var(--primary-bg);
+        border-radius: 12px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      .calculation-steps h3 {
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 16px;
+      }
+
+      .formula {
+        background: #f5f7fa;
+        padding: 12px;
+        border-radius: 8px;
+        margin: 12px 0;
+        font-family: "Courier New", monospace;
+        overflow-x: auto;
+        font-size: 12px;
+      }
+
+      .cards {
+        background: var(--primary-bg);
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 15px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .cards h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+        color: #2c502e;
+      }
+
+      /* Mobile specific adjustments */
+      @media (max-width: 480px) {
+        body {
+          padding: 8px;
+        }
+
+        .header {
+          padding: 8px 10px;
+          gap: 6px;
+        }
+
+        .header-center h1 {
+          font-size: 17px;
+          margin-bottom: 3px;
+        }
+
+        .back-btn {
+          display: none;
+        }
+
+        .icon-btn {
+          width: 28px;
+          height: 28px;
+          font-size: 12px;
+        }
+
+        .card {
+          padding: 12px;
+        }
+
+        .card h2 {
+          font-size: 16px;
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .result-value {
+          font-size: 14px;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+
+        .action-btn {
+          width: 100%;
+          min-width: auto;
+        }
+      }
+
+      /* Tablet and larger screens */
+      @media (min-width: 768px) {
+        body {
+          padding: 20px;
+        }
+
+        .header {
+          padding: 12px 15px;
+        }
+
+        .back-btn {
+          padding: 10px 16px;
+          font-size: 13px;
+        }
+
+        .header-center h1 {
+          font-size: 20px;
+        }
+
+        .icon-btn {
+          width: 36px;
+          height: 36px;
+          font-size: 16px;
+        }
+
+        .main-content {
+          grid-template-columns: 1fr 1fr;
+          gap: 25px;
+        }
+
+        .card {
+          padding: 20px;
+        }
+
+        .card h2 {
+          font-size: 22px;
+        }
+
+        .cards.full-width {
+          grid-column: 1 / -1;
+        }
+
+        .results-grid {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 20px;
+        }
+
+        .result-value {
+          font-size: 24px;
+        }
+
+        .charts-container {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 25px;
+        }
+
+        .chart-wrapper canvas {
+          max-height: 300px;
+        }
+
+        .info-cards {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 25px;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .header-center h1 {
+          font-size: 24px;
+        }
+
+        .result-value {
+          font-size: 26px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Top Bar -->
+      <div class="header">
+        <button class="back-btn" onclick="window.location.href='../../home.html'">
+          <span>←</span> Go Back
+        </button>
+        <div class="header-center">
+          <h1>Loan EMI Calculator</h1>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" onclick="shareCalculator()" title="Share">📤</button>
+          <button class="icon-btn" onclick="downloadPDF()" title="Download PDF">📄</button>
+          <button class="icon-btn" onclick="toggleDarkMode()" title="Toggle Theme">🌓</button>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <!-- Input Section -->
+        <div class="card">
+          <h2>Loan Details</h2>
+
+          <div class="input-group">
+            <label for="loanAmount">Loan Amount</label>
+            <input type="number" id="loanAmount" value="500000" min="1000" step="1000"/>
+          </div>
+
+          <div class="input-group">
+            <label for="interestRate">Interest Rate (% per annum)</label>
+            <input type="number" id="interestRate" value="8.5" min="0.1" max="30" step="0.1"/>
+          </div>
+
+          <div class="input-group">
+            <label>Loan Tenure</label>
+            <div class="toggle-group">
+              <button class="toggle-btn active" id="tenureYears" onclick="setTenureType('years')">Years</button>
+              <button class="toggle-btn" id="tenureMonths" onclick="setTenureType('months')">Months</button>
+            </div>
+            <input type="number" id="tenure" value="5" min="1" style="margin-top: 15px"/>
+          </div>
+
+          <div class="input-group">
+            <label for="currency">Currency</label>
+            <select id="currency">
+              <option value="₹">INR (₹)</option>
+              <option value="$">USD ($)</option>
+              <option value="€">EUR (€)</option>
+              <option value="£">GBP (£)</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Payment Frequency</label>
+            <div class="toggle-group">
+              <button class="toggle-btn active" id="freqMonthly" onclick="setFrequency('monthly')">Monthly</button>
+              <button class="toggle-btn" id="freqYearly" onclick="setFrequency('yearly')">Yearly</button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="extraPayment">Extra Payment (Optional)</label>
+            <input type="number" id="extraPayment" value="0" min="0" step="100"/>
+          </div>
+
+          <div class="btn-group">
+            <button class="calculate-btn" onclick="calculateEMI()">Calculate EMI</button>
+            <button class="reset-btn" onclick="resetForm()">Reset</button>
+          </div>
+        </div>
+
+        <!-- Quick Info -->
+        <div class="card">
+          <h2>Quick Tips</h2>
+          <div style="color: #555; line-height: 1.8">
+            <p style="margin-bottom: 15px">
+              📊 <strong>EMI</strong> stands for Equated Monthly Installment -
+              the fixed amount you pay each month.
+            </p>
+            <p style="margin-bottom: 15px">
+              💡 Lower interest rates and shorter tenures reduce total interest
+              paid.
+            </p>
+            <p style="margin-bottom: 15px">
+              📈 Extra payments can significantly reduce your loan tenure.
+            </p>
+            <p style="margin-bottom: 15px">
+              🎯 Use the comparison tool to see if FD investment is better.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="cards full-width hidden" id="resultsSection">
+        <h2>Your EMI Breakdown</h2>
+
+        <div class="results-grid">
+          <div class="result-item">
+            <div class="result-label">Monthly EMI</div>
+            <div class="result-value" id="emiValue">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Total Interest</div>
+            <div class="result-value" id="interestValue">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Total Payment</div>
+            <div class="result-value" id="totalValue">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Payback Date</div>
+            <div class="result-value" id="paybackDate">
+              -
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-container">
+          <div class="chart-wrapper">
+            <h3>Interest vs Principal</h3>
+            <canvas id="pieChart"></canvas>
+          </div>
+          <div class="chart-wrapper">
+            <h3>Year-wise Payment Breakdown</h3>
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="action-btn" onclick="downloadPDF()">
+            📄 Download PDF
+          </button>
+          <button class="action-btn" onclick="toggleComparison()">
+            📊 Compare with FD
+          </button>
+          <button class="action-btn" onclick="toggleSteps()">
+            🧮 Show Calculation Steps
+          </button>
+        </div>
+
+        <!-- FD Comparison -->
+        <div class="comparison-section hidden" id="comparisonSection">
+          <h3>Fixed Deposit Comparison</h3>
+          <div class="input-group">
+            <label for="fdRate">FD Interest Rate (% per annum)</label>
+            <input type="number" id="fdRate" value="7.5" min="1" max="15" step="0.1"/>
+          </div>
+          <button class="action-btn" onclick="compareFD()" style="margin-top: 15px">Calculate FD Returns</button>
+          <div id="fdResults" style="margin-top: 20px; color: #555"></div>
+        </div>
+
+        <!-- Calculation Steps -->
+        <div class="calculation-steps hidden" id="calculationSteps">
+          <h3>Step-by-Step Calculation</h3>
+          <div class="formula">
+            <strong>EMI Formula:</strong><br />
+            EMI = [P × r × (1 + r)^n] / [(1 + r)^n - 1]<br /><br />
+            Where:<br />
+            P = Principal loan amount<br />
+            r = Monthly interest rate (Annual rate / 12 / 100)<br />
+            n = Loan tenure in months
+          </div>
+          <div
+            id="calculationExample"
+            style="margin-top: 15px; color: #555; line-height: 1.8"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="info-cards">
+        <div class="info-card">
+          <h3>How to Use the Loan EMI Calculator</h3>
+          <ul>
+            <li>Enter your desired loan amount in the first field</li>
+            <li>Input the annual interest rate offered by your lender</li>
+            <li>Choose your loan tenure in years or months</li>
+            <li>Select your preferred currency</li>
+            <li>Add any extra payment you plan to make (optional)</li>
+            <li>Click "Calculate EMI" to see your results instantly</li>
+            <li>Use the charts and comparison tools for deeper insights</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h3>What is EMI?</h3>
+          <p>
+            EMI (Equated Monthly Installment) is a fixed payment amount made by
+            a borrower to a lender at a specified date each calendar month. EMIs
+            consist of both principal and interest components.
+          </p>
+          <p style="margin-top: 15px">
+            <strong>Example:</strong> If you borrow ₹5,00,000 at 8.5% interest
+            for 5 years, your EMI would be approximately ₹10,268. Over 60
+            months, you'll pay ₹6,16,080 in total, with ₹1,16,080 as interest.
+          </p>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Responsive Loan EMI Calculator JS
+      let tenureType = "years";
+      let frequency = "monthly";
+      let pieChart, barChart;
+
+      function setTenureType(type) {
+        tenureType = type;
+        document
+          .getElementById("tenureYears")
+          .classList.toggle("active", type === "years");
+        document
+          .getElementById("tenureMonths")
+          .classList.toggle("active", type === "months");
+        const tenureInput = document.getElementById("tenure");
+        tenureInput.min = type === "years" ? 1 : 1;
+        tenureInput.max = type === "years" ? 30 : 360;
+      }
+
+      function setFrequency(freq) {
+        frequency = freq;
+        document
+          .getElementById("freqMonthly")
+          .classList.toggle("active", freq === "monthly");
+        document
+          .getElementById("freqYearly")
+          .classList.toggle("active", freq === "yearly");
+      }
+
+      function calculateEMI() {
+        // Get values
+        let P = parseFloat(document.getElementById("loanAmount").value);
+        let annualRate = parseFloat(
+          document.getElementById("interestRate").value
+        );
+        let tenureVal = parseInt(document.getElementById("tenure").value);
+        let extra =
+          parseFloat(document.getElementById("extraPayment").value) || 0;
+        let curr = document.getElementById("currency").value;
+
+        // Validate inputs
+        if (
+          !P ||
+          P <= 0 ||
+          !annualRate ||
+          annualRate <= 0 ||
+          !tenureVal ||
+          tenureVal <= 0
+        ) {
+          alert("Please enter valid loan details");
+          return;
+        }
+
+        // Calculate tenure in months
+        let n =
+          tenureType === "years"
+            ? tenureVal * (frequency === "monthly" ? 12 : 1)
+            : tenureVal * (frequency === "monthly" ? 1 : 1 / 12);
+        n = Math.round(n);
+
+        // Calculate interest rate
+        let r = annualRate / (frequency === "monthly" ? 12 : 1) / 100;
+
+        // Calculate EMI
+        let emi = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+        emi = isFinite(emi) ? emi : 0;
+
+        // Add extra payment
+        if (extra > 0) {
+          emi += extra;
+        }
+
+        let totalPayment = emi * n;
+        let totalInterest = totalPayment - P;
+
+        // Calculate payback date
+        let now = new Date();
+        let payback = new Date(now);
+        payback.setMonth(
+          payback.getMonth() + (frequency === "monthly" ? n : n * 12)
+        );
+        let paybackStr = payback.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+
+        // Update UI
+        document.getElementById("resultsSection").classList.remove("hidden");
+        document.getElementById("emiValue").textContent =
+          curr +
+          " " +
+          emi.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        document.getElementById("interestValue").textContent =
+          curr +
+          " " +
+          totalInterest.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        document.getElementById("totalValue").textContent =
+          curr +
+          " " +
+          totalPayment.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        document.getElementById("paybackDate").textContent = paybackStr;
+
+        // Draw charts
+        drawCharts(P, totalInterest, n, emi, curr, annualRate);
+
+        // Show calculation steps
+        showCalculationSteps(P, annualRate, r, n, emi, curr);
+
+        // Scroll to results on mobile
+        if (window.innerWidth < 768) {
+          document
+            .getElementById("resultsSection")
+            .scrollIntoView({ behavior: "smooth" });
+        }
+      }
+
+      function drawCharts(P, interest, n, emi, curr, annualRate) {
+        // Destroy existing charts
+        if (pieChart) pieChart.destroy();
+        if (barChart) barChart.destroy();
+
+        // Pie Chart - Principal vs Interest
+        const pieCtx = document.getElementById("pieChart");
+        if (pieCtx) {
+          pieChart = new Chart(pieCtx.getContext("2d"), {
+            type: "pie",
+            data: {
+              labels: ["Principal", "Interest"],
+              datasets: [
+                {
+                  data: [P, interest],
+                  backgroundColor: ["#3498db", "#e67e22"],
+                  borderColor: "#e0e5ec",
+                  borderWidth: 2,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    padding: 10,
+                    font: {
+                      size: 12,
+                    },
+                  },
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      let label = context.label || "";
+                      if (label) {
+                        label += ": ";
+                      }
+                      label +=
+                        curr +
+                        " " +
+                        context.parsed.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        });
+                      return label;
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }
+
+        // Bar Chart - Year-wise Payment Breakdown
+        const barCtx = document.getElementById("barChart");
+        if (barCtx) {
+          let yearlyData = calculateYearlyBreakdown(P, annualRate, n, emi);
+
+          barChart = new Chart(barCtx.getContext("2d"), {
+            type: "bar",
+            data: {
+              labels: yearlyData.labels,
+              datasets: [
+                {
+                  label: "Principal",
+                  data: yearlyData.principal,
+                  backgroundColor: "#3498db",
+                },
+                {
+                  label: "Interest",
+                  data: yearlyData.interest,
+                  backgroundColor: "#e67e22",
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              scales: {
+                x: {
+                  stacked: true,
+                  ticks: {
+                    font: {
+                      size: 10,
+                    },
+                  },
+                },
+                y: {
+                  stacked: true,
+                  ticks: {
+                    font: {
+                      size: 10,
+                    },
+                    callback: function (value) {
+                      return curr + " " + value.toLocaleString();
+                    },
+                  },
+                },
+              },
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    padding: 10,
+                    font: {
+                      size: 12,
+                    },
+                  },
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      let label = context.dataset.label || "";
+                      if (label) {
+                        label += ": ";
+                      }
+                      label +=
+                        curr +
+                        " " +
+                        context.parsed.y.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        });
+                      return label;
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }
+      }
+
+      function calculateYearlyBreakdown(P, annualRate, n, emi) {
+        let labels = [];
+        let principalData = [];
+        let interestData = [];
+        let balance = P;
+        let monthlyRate = annualRate / 12 / 100;
+
+        let years = Math.ceil(n / 12);
+        for (let year = 1; year <= years; year++) {
+          let yearPrincipal = 0;
+          let yearInterest = 0;
+          let monthsInYear = Math.min(12, n - (year - 1) * 12);
+
+          for (let month = 1; month <= monthsInYear; month++) {
+            let interest = balance * monthlyRate;
+            let principal = emi - interest;
+
+            if (principal > balance) {
+              principal = balance;
+            }
+
+            yearInterest += interest;
+            yearPrincipal += principal;
+            balance -= principal;
+
+            if (balance <= 0) break;
+          }
+
+          labels.push("Year " + year);
+          principalData.push(Math.round(yearPrincipal));
+          interestData.push(Math.round(yearInterest));
+
+          if (balance <= 0) break;
+        }
+
+        return {
+          labels: labels,
+          principal: principalData,
+          interest: interestData,
+        };
+      }
+
+      function showCalculationSteps(P, annualRate, r, n, emi, curr) {
+        const calculationExample =
+          document.getElementById("calculationExample");
+        if (calculationExample) {
+          calculationExample.innerHTML = `
+            <strong>Given:</strong><br>
+            Principal (P) = ${curr} ${P.toLocaleString()}<br>
+            Annual Rate = ${annualRate}%<br>
+            Monthly Rate (r) = ${(r * 100).toFixed(4)}%<br>
+            Tenure (n) = ${n} months<br><br>
+
+            <strong>Calculation:</strong><br>
+            EMI = [P × r × (1 + r)^n] / [(1 + r)^n - 1]<br>
+            EMI = [${P} × ${r.toFixed(6)} × (1 + ${r.toFixed(
+            6
+          )})^${n}] / [(1 + ${r.toFixed(6)})^${n} - 1]<br><br>
+
+            <strong>Result:</strong><br>
+            EMI = <b>${curr} ${emi.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}</b>
+          `;
+        }
+      }
+
+      function resetForm() {
+        document.getElementById("loanAmount").value = 500000;
+        document.getElementById("interestRate").value = 8.5;
+        setTenureType("years");
+        document.getElementById("tenure").value = 5;
+        document.getElementById("currency").value = "₹";
+        setFrequency("monthly");
+        document.getElementById("extraPayment").value = 0;
+        document.getElementById("resultsSection").classList.add("hidden");
+        document.getElementById("comparisonSection").classList.add("hidden");
+        document.getElementById("calculationSteps").classList.add("hidden");
+
+        // Destroy charts
+        if (pieChart) {
+          pieChart.destroy();
+          pieChart = null;
+        }
+        if (barChart) {
+          barChart.destroy();
+          barChart = null;
+        }
+
+        // Scroll to top on mobile
+        if (window.innerWidth < 768) {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+
+      function toggleComparison() {
+        document.getElementById("comparisonSection").classList.toggle("hidden");
+      }
+
+      function toggleSteps() {
+        const stepsSection = document.getElementById("calculationSteps");
+        stepsSection.classList.toggle("hidden");
+
+        // Scroll to section on mobile
+        if (
+          window.innerWidth < 768 &&
+          !stepsSection.classList.contains("hidden")
+        ) {
+          stepsSection.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+
+      function downloadPDF() {
+        // Check if results are calculated
+        if (
+          document.getElementById("resultsSection").classList.contains("hidden")
+        ) {
+          alert("Please calculate EMI first");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        let doc = new jsPDF();
+
+        // Add title
+        doc.setFontSize(18);
+        doc.setTextColor(44, 62, 80);
+        doc.text("Loan EMI Calculator Results", 105, 15, { align: "center" });
+
+        // Add results
+        doc.setFontSize(12);
+        doc.setTextColor(85, 85, 85);
+
+        let yPos = 30;
+        doc.text(
+          "Monthly EMI: " + document.getElementById("emiValue").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "Total Interest: " +
+            document.getElementById("interestValue").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "Total Payment: " + document.getElementById("totalValue").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "Payback Date: " + document.getElementById("paybackDate").textContent,
+          20,
+          yPos
+        );
+
+        // Add loan details
+        yPos += 20;
+        doc.setFontSize(14);
+        doc.setTextColor(44, 62, 80);
+        doc.text("Loan Details", 20, yPos);
+
+        yPos += 10;
+        doc.setFontSize(11);
+        doc.setTextColor(85, 85, 85);
+        doc.text(
+          "Loan Amount: " +
+            document.getElementById("currency").value +
+            " " +
+            document.getElementById("loanAmount").value,
+          20,
+          yPos
+        );
+        yPos += 8;
+        doc.text(
+          "Interest Rate: " +
+            document.getElementById("interestRate").value +
+            "% per annum",
+          20,
+          yPos
+        );
+        yPos += 8;
+        doc.text(
+          "Tenure: " +
+            document.getElementById("tenure").value +
+            " " +
+            tenureType,
+          20,
+          yPos
+        );
+        yPos += 8;
+        doc.text(
+          "Payment Frequency: " +
+            frequency.charAt(0).toUpperCase() +
+            frequency.slice(1),
+          20,
+          yPos
+        );
+
+        let extra = document.getElementById("extraPayment").value;
+        if (extra && parseFloat(extra) > 0) {
+          yPos += 8;
+          doc.text(
+            "Extra Payment: " +
+              document.getElementById("currency").value +
+              " " +
+              extra,
+            20,
+            yPos
+          );
+        }
+
+        // Add footer
+        doc.setFontSize(9);
+        doc.setTextColor(150, 150, 150);
+        doc.text("Generated by Loan EMI Calculator", 105, 280, {
+          align: "center",
+        });
+        doc.text(new Date().toLocaleString(), 105, 285, { align: "center" });
+
+        // Save PDF
+        doc.save("Loan-EMI-Results.pdf");
+      }
+
+      function compareFD() {
+        let P = parseFloat(document.getElementById("loanAmount").value);
+        let fdRate = parseFloat(document.getElementById("fdRate").value);
+        let tenureVal = parseInt(document.getElementById("tenure").value);
+
+        if (!fdRate || fdRate <= 0) {
+          alert("Please enter a valid FD rate");
+          return;
+        }
+
+        let n = tenureType === "years" ? tenureVal : tenureVal / 12;
+        let curr = document.getElementById("currency").value;
+
+        // Calculate FD returns with compound interest
+        let fdMaturityAmount = P * Math.pow(1 + fdRate / 100, n);
+        let fdReturn = fdMaturityAmount - P;
+
+        // Get loan details for comparison
+        let loanInterest = parseFloat(
+          document
+            .getElementById("interestValue")
+            .textContent.replace(/[^0-9.-]+/g, "")
+        );
+
+        let resultHTML = `
+          <div style="background: #f5f7fa; padding: 15px; border-radius: 10px; margin-top: 15px;">
+            <h4 style="color: #2c3e50; margin-bottom: 10px;">FD Investment Analysis</h4>
+            <p style="margin: 8px 0;"><strong>Initial Investment:</strong> ${curr} ${P.toLocaleString(
+          undefined,
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }
+        )}</p>
+            <p style="margin: 8px 0;"><strong>FD Rate:</strong> ${fdRate}% per annum</p>
+            <p style="margin: 8px 0;"><strong>Tenure:</strong> ${n} years</p>
+            <p style="margin: 8px 0;"><strong>Maturity Amount:</strong> ${curr} ${fdMaturityAmount.toLocaleString(
+          undefined,
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }
+        )}</p>
+            <p style="margin: 8px 0;"><strong>Interest Earned:</strong> ${curr} ${fdReturn.toLocaleString(
+          undefined,
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }
+        )}</p>
+            <hr style="margin: 15px 0; border: none; border-top: 1px solid #ccc;">
+            <h4 style="color: #2c3e50; margin-bottom: 10px;">Loan vs FD Comparison</h4>
+            <p style="margin: 8px 0;"><strong>Loan Interest to Pay:</strong> ${curr} ${loanInterest.toLocaleString(
+          undefined,
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }
+        )}</p>
+            <p style="margin: 8px 0;"><strong>FD Interest to Earn:</strong> ${curr} ${fdReturn.toLocaleString(
+          undefined,
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }
+        )}</p>
+            <p style="margin: 8px 0;"><strong>Net Difference:</strong> ${curr} ${Math.abs(
+          loanInterest - fdReturn
+        ).toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}</p>
+            <div style="background: ${
+              loanInterest > fdReturn ? "#e74c3c" : "#27ae60"
+            }; color: white; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;">
+              ${
+                loanInterest > fdReturn
+                  ? "⚠️ Loan interest is higher than FD returns. Consider paying off the loan."
+                  : "✅ FD returns are higher than loan interest. FD investment may be beneficial."
+              }
+            </div>
+          </div>
+        `;
+
+        document.getElementById("fdResults").innerHTML = resultHTML;
+      }
+
+      function shareCalculator() {
+        if (navigator.share) {
+          navigator
+            .share({
+              title: "Loan EMI Calculator",
+              text: "Calculate your loan EMI with this easy-to-use calculator!",
+              url: window.location.href,
+            })
+            .then(() => console.log("Shared successfully"))
+            .catch((error) => console.log("Error sharing:", error));
+        } else {
+          // Fallback for browsers that don't support Web Share API
+          const url = window.location.href;
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(() => {
+              alert("Link copied to clipboard!");
+            });
+          } else {
+            alert("Sharing not supported on this browser. URL: " + url);
+          }
+        }
+      }
+
+      function toggleDarkMode() {
+        alert("Dark mode feature coming soon!");
+      }
+
+      // Responsive: recalculate charts on window resize
+      let resizeTimeout;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          if (
+            !document
+              .getElementById("resultsSection")
+              .classList.contains("hidden")
+          ) {
+            if (pieChart) pieChart.resize();
+            if (barChart) barChart.resize();
+          }
+        }, 250);
+      });
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        setTenureType("years");
+        setFrequency("monthly");
+
+        // Add input validation
+        const numberInputs = document.querySelectorAll('input[type="number"]');
+        numberInputs.forEach((input) => {
+          input.addEventListener("input", function () {
+            if (this.value < 0) this.value = 0;
+            if (
+              this.hasAttribute("max") &&
+              parseFloat(this.value) > parseFloat(this.getAttribute("max"))
+            ) {
+              this.value = this.getAttribute("max");
+            }
+          });
+        });
+
+        // Prevent form submission on Enter key
+        document.addEventListener("keypress", function (e) {
+          if (e.key === "Enter" && e.target.tagName !== "BUTTON") {
+            e.preventDefault();
+            calculateEMI();
+          }
+        });
+
+        // Add touch feedback for mobile
+        if ("ontouchstart" in window) {
+          document.querySelectorAll("button, .toggle-btn").forEach((btn) => {
+            btn.addEventListener("touchstart", function () {
+              this.style.transform = "scale(0.98)";
+            });
+            btn.addEventListener("touchend", function () {
+              this.style.transform = "scale(1)";
+            });
+          });
+        }
+
+        // Smooth scroll polyfill for older browsers
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+          anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute("href"));
+            if (target) {
+              target.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          });
+        });
+      });
+
+      // Service Worker registration for PWA (optional)
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          // Uncomment when you have a service worker file
+          // navigator.serviceWorker.register('/sw.js')
+          //   .then(reg => console.log('Service Worker registered'))
+          //   .catch(err => console.log('Service Worker registration failed'));
+        });
+      }
+
+      // Prevent zoom on double tap for better mobile experience
+      let lastTouchEnd = 0;
+      document.addEventListener(
+        "touchend",
+        function (event) {
+          const now = new Date().getTime();
+          if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+          }
+          lastTouchEnd = now;
+        },
+        false
+      );
+
+      // Add viewport height fix for mobile browsers
+      function setVH() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--vh", `${vh}px`);
+      }
+
+      setVH();
+      window.addEventListener("resize", setVH);
+      window.addEventListener("orientationchange", setVH);
+    </script>
+  </body>
+</html>

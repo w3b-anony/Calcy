@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Ideal Weight Calculator 💪 - Find Your Perfect Body Weight by Height, Age
+      & Gender
+    </title>
+    <meta
+      name="description"
+      content="Free Ideal Weight Calculator using multiple scientific formulas (BMI, Hamwi, Devine, Robinson). Calculate your ideal body weight based on height, age, gender, and body frame. Get personalized weight range and health recommendations."
+    />
+    <meta
+      name="keywords"
+      content="ideal weight calculator, perfect weight, healthy weight calculator, body weight calculator, BMI calculator, target weight, weight loss goal, healthy BMI, weight range calculator"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-bg: #e0e5ec;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #e0e5ec;
+        color: #333;
+        padding: 10px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Top Bar */
+      .header {
+        background: var(--primary-bg);
+        padding: 10px 12px;
+        border: 1px solid #9aa3af;
+        border-radius: 10px;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: nowrap;
+      }
+
+      .back-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        padding: 8px 12px;
+        border-radius: 10px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        color: #555;
+        font-size: 12px;
+        transition: all 0.3s;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .back-btn:hover {
+        box-shadow: inset 3px 3px 7px #a3b1c6, inset -3px -3px 7px #ffffff;
+      }
+
+      .back-btn:active {
+        box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+      }
+
+      .header-center {
+        flex: 1;
+        text-align: center;
+        min-width: 0;
+      }
+
+      .header-center h1 {
+        font-size: 16px;
+        margin-bottom: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+
+      .icon-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .icon-btn:active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      /* Main Content */
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      /* Card Style */
+      .card {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 15px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .card h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+        color: #2c502e;
+      }
+
+      /* Input Groups */
+      .input-group {
+        margin-bottom: 12px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+        font-size: 13px;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      input[type="number"],
+      select {
+        width: 100%;
+        padding: 7px 15px;
+        border: none;
+        border-radius: 10px;
+        border: 1px solid #9aa3af;
+        background: var(--primary-bg);
+        box-shadow: inset 0px 0px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        font-size: 14px;
+        color: #333;
+        transition: all 0.3s;
+      }
+
+      input[type="number"]:focus,
+      select:focus {
+        outline: none;
+        box-shadow: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+      }
+
+      .unit-toggle {
+        display: inline-block;
+        margin-left: 10px;
+        font-size: 11px;
+        color: #777;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      /* Toggle Switch */
+      .toggle-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .toggle-btn {
+        flex: 1;
+        min-width: 80px;
+        padding: 7px 15px;
+        border: none;
+        border-radius: 10px;
+        border: 1px solid #9aa3afdf;
+        background: var(--primary-bg);
+        box-shadow: 0px 0px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        cursor: pointer;
+        font-size: 13px;
+        color: #555;
+        transition: all 0.3s;
+      }
+
+      .toggle-btn.active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        color: #27ae60;
+        font-weight: 600;
+      }
+
+      /* Buttons */
+      .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .calculate-btn {
+        flex: 2;
+        min-width: 150px;
+        padding: 14px 30px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(145deg, #27ae60, #229954);
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .calculate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 8px 8px 16px #a3b1c6, -8px -8px 16px #ffffff;
+      }
+
+      .calculate-btn:active {
+        transform: translateY(0);
+        box-shadow: inset 2px 2px 8px #229954, inset -4px -4px 8px #2ecc71;
+      }
+
+      .reset-btn {
+        flex: 1;
+        min-width: 100px;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 12px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .reset-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+
+      .reset-btn:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+
+      /* Results */
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .result-item {
+        background: var(--primary-bg);
+        padding: 10px;
+        border-radius: 12px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        text-align: center;
+      }
+
+      .result-label {
+        font-size: 9px;
+        color: #777;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .result-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2c3e50;
+        word-break: break-word;
+      }
+
+      /* Status Badge */
+      .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        margin: 10px 0;
+      }
+
+      .status-underweight {
+        background: #3498db;
+        color: white;
+      }
+
+      .status-normal {
+        background: #27ae60;
+        color: white;
+      }
+
+      .status-overweight {
+        background: #f39c12;
+        color: white;
+      }
+
+      .status-obese {
+        background: #e74c3c;
+        color: white;
+      }
+
+      /* Charts */
+      .charts-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .chart-wrapper {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 9px 9px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .chart-wrapper h3 {
+        margin-bottom: 15px;
+        color: #2c3e50;
+        font-size: 16px;
+      }
+
+      .chart-wrapper canvas {
+        max-height: 150px;
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .action-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 140px;
+        justify-content: center;
+      }
+
+      .action-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+
+      /* Info Cards */
+      .info-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .info-card {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid #9aa3af;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .info-card h3 {
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 16px;
+      }
+
+      .info-card p,
+      .info-card ul {
+        color: #555;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+
+      .info-card ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .info-card li {
+        padding-left: 20px;
+        position: relative;
+        margin-bottom: 8px;
+      }
+
+      .info-card li:before {
+        content: "•";
+        position: absolute;
+        left: 8px;
+        color: #27ae60;
+        font-weight: bold;
+      }
+
+      /* Hidden Sections */
+      .hidden {
+        display: none;
+      }
+
+      .detail-section {
+        margin-top: 20px;
+        padding: 15px;
+        background: var(--primary-bg);
+        border-radius: 12px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      .detail-section h3 {
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 16px;
+      }
+
+      .formula {
+        background: #f5f7fa;
+        padding: 12px;
+        border-radius: 8px;
+        margin: 12px 0;
+        font-family: "Courier New", monospace;
+        overflow-x: auto;
+        font-size: 12px;
+      }
+
+      .weight-range-bar {
+        width: 100%;
+        height: 40px;
+        background: linear-gradient(
+          to right,
+          #3498db 0%,
+          #27ae60 25%,
+          #27ae60 75%,
+          #f39c12 100%
+        );
+        border-radius: 10px;
+        position: relative;
+        margin: 20px 0;
+      }
+
+      .current-weight-marker {
+        position: absolute;
+        top: -10px;
+        width: 3px;
+        height: 60px;
+        background: #e74c3c;
+        transform: translateX(-50%);
+      }
+
+      .current-weight-marker::before {
+        content: "You";
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 11px;
+        font-weight: 600;
+        color: #e74c3c;
+        white-space: nowrap;
+      }
+
+      /* Mobile specific adjustments */
+      @media (max-width: 480px) {
+        body {
+          padding: 8px;
+        }
+
+        .header {
+          padding: 8px 10px;
+          gap: 6px;
+        }
+
+        .header-center h1 {
+          font-size: 14px;
+        }
+
+        .back-btn {
+          display: none;
+        }
+
+        .icon-btn {
+          width: 28px;
+          height: 28px;
+          font-size: 12px;
+        }
+
+        .card {
+          padding: 12px;
+        }
+
+        .card h2 {
+          font-size: 16px;
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .result-value {
+          font-size: 14px;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+
+        .action-btn {
+          width: 100%;
+          min-width: auto;
+        }
+      }
+
+      /* Tablet and larger screens */
+      @media (min-width: 768px) {
+        body {
+          padding: 20px;
+        }
+
+        .header {
+          padding: 12px 15px;
+        }
+
+        .back-btn {
+          padding: 10px 16px;
+          font-size: 13px;
+        }
+
+        .header-center h1 {
+          font-size: 20px;
+        }
+
+        .icon-btn {
+          width: 36px;
+          height: 36px;
+          font-size: 16px;
+        }
+
+        .main-content {
+          grid-template-columns: 1fr 1fr;
+          gap: 25px;
+        }
+
+        .card {
+          padding: 20px;
+        }
+
+        .card h2 {
+          font-size: 22px;
+        }
+
+        .card.full-width {
+          grid-column: 1 / -1;
+        }
+
+        .results-grid {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 20px;
+        }
+
+        .result-value {
+          font-size: 24px;
+        }
+
+        .charts-container {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 25px;
+        }
+
+        .chart-wrapper canvas {
+          max-height: 300px;
+        }
+
+        .info-cards {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 25px;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .header-center h1 {
+          font-size: 24px;
+        }
+
+        .result-value {
+          font-size: 26px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Top Bar -->
+      <div class="header">
+        <button class="back-btn" onclick="window.history.back()">
+          <span>←</span> Go Back
+        </button>
+        <div class="header-center">
+          <h1>Ideal Weight Calculator</h1>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" onclick="shareCalculator()" title="Share">
+            📤
+          </button>
+          <button class="icon-btn" onclick="downloadPDF()" title="Download PDF">
+            📄
+          </button>
+          <button
+            class="icon-btn"
+            onclick="toggleDarkMode()"
+            title="Toggle Theme"
+          >
+            🌓
+          </button>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <!-- Input Section -->
+        <div class="card">
+          <h2>Your Details</h2>
+
+          <div class="input-group">
+            <label for="height">
+              Height
+              <span
+                class="unit-toggle"
+                id="heightUnit"
+                onclick="toggleHeightUnit()"
+                >cm</span
+              >
+            </label>
+            <input
+              type="number"
+              id="height"
+              value="170"
+              min="100"
+              max="250"
+              step="0.1"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="age">Age (years)</label>
+            <input type="number" id="age" value="30" min="10" max="100" />
+          </div>
+
+          <div class="input-group">
+            <label>Gender</label>
+            <div class="toggle-group">
+              <button
+                class="toggle-btn active"
+                id="genderMale"
+                onclick="setGender('male')"
+              >
+                Male
+              </button>
+              <button
+                class="toggle-btn"
+                id="genderFemale"
+                onclick="setGender('female')"
+              >
+                Female
+              </button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Body Frame</label>
+            <div class="toggle-group">
+              <button
+                class="toggle-btn"
+                id="frameSmall"
+                onclick="setFrame('small')"
+              >
+                Small
+              </button>
+              <button
+                class="toggle-btn active"
+                id="frameMedium"
+                onclick="setFrame('medium')"
+              >
+                Medium
+              </button>
+              <button
+                class="toggle-btn"
+                id="frameLarge"
+                onclick="setFrame('large')"
+              >
+                Large
+              </button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="currentWeight">
+              Current Weight (Optional)
+              <span
+                class="unit-toggle"
+                id="weightUnit"
+                onclick="toggleWeightUnit()"
+                >kg</span
+              >
+            </label>
+            <input
+              type="number"
+              id="currentWeight"
+              placeholder="Enter your current weight"
+              min="20"
+              max="300"
+              step="0.1"
+            />
+          </div>
+
+          <div class="btn-group">
+            <button class="calculate-btn" onclick="calculateIdealWeight()">
+              Calculate Ideal Weight
+            </button>
+            <button class="reset-btn" onclick="resetForm()">Reset</button>
+          </div>
+        </div>
+
+        <!-- Quick Info -->
+        <div class="card">
+          <h2>Quick Guide 💪</h2>
+          <div style="color: #555; line-height: 1.8">
+            <p style="margin-bottom: 15px">
+              🎯 <strong>Multiple Formulas</strong> - We use 5+ scientific
+              methods for accuracy
+            </p>
+            <p style="margin-bottom: 15px">
+              📊 <strong>BMI Based</strong> - Results aligned with WHO standards
+            </p>
+            <p style="margin-bottom: 15px">
+              🏋️ <strong>Body Frame</strong> - Accounts for your bone structure
+            </p>
+            <p style="margin-bottom: 15px">
+              ⚖️ <strong>Healthy Range</strong> - Get your ideal weight range,
+              not just one number
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="card full-width hidden" id="resultsSection">
+        <h2>Your Ideal Weight Results</h2>
+
+        <div
+          id="statusSection"
+          style="text-align: center; margin: 20px 0"
+        ></div>
+
+        <div class="results-grid">
+          <div class="result-item">
+            <div class="result-label">Ideal Weight (Average)</div>
+            <div class="result-value" id="idealWeightAvg">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Healthy Range</div>
+            <div class="result-value" id="healthyRange">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">BMI Range</div>
+            <div class="result-value" id="bmiRange">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Weight to Gain/Lose</div>
+            <div class="result-value" id="weightDifference">-</div>
+          </div>
+        </div>
+
+        <!-- Weight Range Visualization -->
+        <div id="weightRangeViz" style="margin: 30px 0"></div>
+
+        <!-- Charts -->
+        <div class="charts-container">
+          <div class="chart-wrapper">
+            <h3>Formula Comparison</h3>
+            <canvas id="formulaChart"></canvas>
+          </div>
+          <div class="chart-wrapper">
+            <h3>BMI Categories</h3>
+            <canvas id="bmiChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="action-btn" onclick="downloadPDF()">
+            📄 Download Report
+          </button>
+          <button class="action-btn" onclick="toggleFormulas()">
+            📊 View Formulas
+          </button>
+          <button class="action-btn" onclick="toggleWeightPlan()">
+            🎯 Create Weight Plan
+          </button>
+        </div>
+
+        <!-- Formula Details -->
+        <div class="detail-section hidden" id="formulaDetails">
+          <h3>Formula Breakdown</h3>
+          <div class="formula">
+            <strong>1. BMI Method (WHO Standard):</strong><br />
+            Ideal Weight = (Height in meters)² × 22.5 (BMI midpoint)<br />
+            Healthy Range: BMI 18.5 - 24.9<br /><br />
+
+            <strong>2. Hamwi Formula:</strong><br />
+            Men: 48 kg + 2.7 kg per inch over 5 feet<br />
+            Women: 45.5 kg + 2.2 kg per inch over 5 feet<br /><br />
+
+            <strong>3. Devine Formula:</strong><br />
+            Men: 50 kg + 2.3 kg per inch over 5 feet<br />
+            Women: 45.5 kg + 2.3 kg per inch over 5 feet<br /><br />
+
+            <strong>4. Robinson Formula:</strong><br />
+            Men: 52 kg + 1.9 kg per inch over 5 feet<br />
+            Women: 49 kg + 1.7 kg per inch over 5 feet<br /><br />
+
+            <strong>5. Miller Formula:</strong><br />
+            Men: 56.2 kg + 1.41 kg per inch over 5 feet<br />
+            Women: 53.1 kg + 1.36 kg per inch over 5 feet
+          </div>
+          <div
+            id="calculationExample"
+            style="margin-top: 15px; color: #555; line-height: 1.8"
+          ></div>
+        </div>
+
+        <!-- Weight Plan Section -->
+        <div class="detail-section hidden" id="weightPlanSection">
+          <h3>Personalized Weight Plan</h3>
+          <div class="input-group">
+            <label for="targetTimeframe">Achieve goal in (weeks)</label>
+            <input
+              type="number"
+              id="targetTimeframe"
+              value="12"
+              min="1"
+              max="104"
+            />
+          </div>
+          <button
+            class="action-btn"
+            onclick="calculateWeightPlan()"
+            style="margin-top: 15px"
+          >
+            Generate Plan
+          </button>
+          <div
+            id="weightPlanResults"
+            style="margin-top: 20px; color: #555"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="info-cards">
+        <div class="info-card">
+          <h3>How to Use This Calculator</h3>
+          <ul>
+            <li>Enter your accurate height in cm or inches</li>
+            <li>Provide your age and select your gender</li>
+            <li>Choose your body frame size (small, medium, or large)</li>
+            <li>Optionally enter your current weight to see comparison</li>
+            <li>Click "Calculate Ideal Weight" to see your results</li>
+            <li>Download your personalized report as PDF</li>
+            <li>Create a weight loss or gain plan based on results</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h3>Understanding Body Frame</h3>
+          <p>
+            <strong>Small Frame:</strong> Wrist circumference less than 6.25"
+            (men) or 5.75" (women). Typically lighter bone structure.
+          </p>
+          <p style="margin-top: 10px">
+            <strong>Medium Frame:</strong> Wrist between 6.25-7.25" (men) or
+            5.75-6.75" (women). Average bone structure.
+          </p>
+          <p style="margin-top: 10px">
+            <strong>Large Frame:</strong> Wrist over 7.25" (men) or 6.75"
+            (women). Heavier, denser bone structure.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>BMI Categories Explained</h3>
+          <ul>
+            <li>
+              <strong>Underweight:</strong> BMI below 18.5 - May need to gain
+              weight
+            </li>
+            <li>
+              <strong>Normal:</strong> BMI 18.5-24.9 - Healthy weight range
+            </li>
+            <li>
+              <strong>Overweight:</strong> BMI 25-29.9 - Consider weight
+              management
+            </li>
+            <li>
+              <strong>Obese:</strong> BMI 30+ - Health risks increase
+              significantly
+            </li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h3>Healthy Weight Tips</h3>
+          <ul>
+            <li>Focus on sustainable lifestyle changes, not quick fixes</li>
+            <li>Combine balanced nutrition with regular exercise</li>
+            <li>Aim for 0.5-1 kg weight loss per week for safety</li>
+            <li>Stay hydrated with at least 8 glasses of water daily</li>
+            <li>Get 7-9 hours of quality sleep each night</li>
+            <li>Track progress but don't obsess over daily fluctuations</li>
+            <li>Consult healthcare professionals for personalized advice</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let gender = "male";
+      let bodyFrame = "medium";
+      let heightUnit = "cm";
+      let weightUnit = "kg";
+      let formulaChart, bmiChart;
+
+      function setGender(g) {
+        gender = g;
+        document
+          .getElementById("genderMale")
+          .classList.toggle("active", g === "male");
+        document
+          .getElementById("genderFemale")
+          .classList.toggle("active", g === "female");
+      }
+
+      function setFrame(frame) {
+        bodyFrame = frame;
+        document
+          .getElementById("frameSmall")
+          .classList.toggle("active", frame === "small");
+        document
+          .getElementById("frameMedium")
+          .classList.toggle("active", frame === "medium");
+        document
+          .getElementById("frameLarge")
+          .classList.toggle("active", frame === "large");
+      }
+
+      function toggleHeightUnit() {
+        const input = document.getElementById("height");
+        const unitSpan = document.getElementById("heightUnit");
+
+        if (heightUnit === "cm") {
+          heightUnit = "in";
+          input.value = (parseFloat(input.value) / 2.54).toFixed(1);
+          unitSpan.textContent = "in";
+        } else {
+          heightUnit = "cm";
+          input.value = (parseFloat(input.value) * 2.54).toFixed(1);
+          unitSpan.textContent = "cm";
+        }
+      }
+
+      function toggleWeightUnit() {
+        const input = document.getElementById("currentWeight");
+        const unitSpan = document.getElementById("weightUnit");
+
+        if (input.value) {
+          if (weightUnit === "kg") {
+            weightUnit = "lbs";
+            input.value = (parseFloat(input.value) * 2.20462).toFixed(1);
+            unitSpan.textContent = "lbs";
+          } else {
+            weightUnit = "kg";
+            input.value = (parseFloat(input.value) / 2.20462).toFixed(1);
+            unitSpan.textContent = "kg";
+          }
+        } else {
+          weightUnit = weightUnit === "kg" ? "lbs" : "kg";
+          unitSpan.textContent = weightUnit;
+        }
+      }
+
+      function calculateIdealWeight() {
+        const height = parseFloat(document.getElementById("height").value);
+        const age = parseInt(document.getElementById("age").value);
+        const currentWeight = parseFloat(
+          document.getElementById("currentWeight").value
+        );
+
+        if (!height || height <= 0 || !age || age <= 0) {
+          alert("Please enter valid height and age");
+          return;
+        }
+
+        const heightCm = heightUnit === "cm" ? height : height * 2.54;
+        const heightM = heightCm / 100;
+        const heightInches = heightCm / 2.54;
+
+        const results = {
+          bmi: calculateBMIMethod(heightM),
+          hamwi: calculateHamwi(heightInches),
+          devine: calculateDevine(heightInches),
+          robinson: calculateRobinson(heightInches),
+          miller: calculateMiller(heightInches),
+        };
+
+        const frameAdjustment = {
+          small: 0.9,
+          medium: 1.0,
+          large: 1.1,
+        };
+
+        Object.keys(results).forEach((key) => {
+          if (key !== "bmi") {
+            results[key] *= frameAdjustment[bodyFrame];
+          }
+        });
+
+        const weights = Object.values(results);
+        const avgWeight = weights.reduce((a, b) => a + b, 0) / weights.length;
+        const minWeight = Math.min(...weights);
+        const maxWeight = Math.max(...weights);
+
+        const bmiMin = 18.5 * heightM * heightM;
+        const bmiMax = 24.9 * heightM * heightM;
+
+        document.getElementById("resultsSection").classList.remove("hidden");
+        document.getElementById("idealWeightAvg").textContent =
+          avgWeight.toFixed(1) + " kg";
+        document.getElementById("healthyRange").textContent =
+          minWeight.toFixed(1) + " - " + maxWeight.toFixed(1) + " kg";
+        document.getElementById("bmiRange").textContent =
+          bmiMin.toFixed(1) + " - " + bmiMax.toFixed(1) + " kg";
+
+        let weightDiffText = "-";
+        let statusHTML = "";
+
+        if (currentWeight && currentWeight > 0) {
+          const currentKg =
+            weightUnit === "kg" ? currentWeight : currentWeight / 2.20462;
+          const diff = avgWeight - currentKg;
+          const currentBMI = currentKg / (heightM * heightM);
+
+          if (Math.abs(diff) < 0.5) {
+            weightDiffText = "At ideal weight ✓";
+            statusHTML = `<div class="status-badge status-normal">Your weight is ideal! 🎉</div>`;
+          } else if (diff > 0) {
+            weightDiffText = "Gain " + Math.abs(diff).toFixed(1) + " kg";
+            statusHTML = `<div class="status-badge status-underweight">Current BMI: ${currentBMI.toFixed(
+              1
+            )} - Consider gaining weight</div>`;
+          } else {
+            weightDiffText = "Lose " + Math.abs(diff).toFixed(1) + " kg";
+            if (currentBMI >= 30) {
+              statusHTML = `<div class="status-badge status-obese">Current BMI: ${currentBMI.toFixed(
+                1
+              )} - Obese range</div>`;
+            } else if (currentBMI >= 25) {
+              statusHTML = `<div class="status-badge status-overweight">Current BMI: ${currentBMI.toFixed(
+                1
+              )} - Overweight range</div>`;
+            } else {
+              statusHTML = `<div class="status-badge status-normal">Current BMI: ${currentBMI.toFixed(
+                1
+              )}</div>`;
+            }
+          }
+
+          drawWeightRangeVisualization(currentKg, minWeight, maxWeight);
+        }
+
+        document.getElementById("weightDifference").textContent =
+          weightDiffText;
+        document.getElementById("statusSection").innerHTML = statusHTML;
+
+        drawCharts(results, heightM);
+        showFormulaDetails(heightCm, heightInches, results, avgWeight);
+
+        if (window.innerWidth < 768) {
+          document
+            .getElementById("resultsSection")
+            .scrollIntoView({ behavior: "smooth" });
+        }
+      }
+
+      function calculateBMIMethod(heightM) {
+        return 22.5 * heightM * heightM;
+      }
+
+      function calculateHamwi(heightInches) {
+        const baseHeight = 60;
+        if (heightInches <= baseHeight) {
+          return gender === "male" ? 48 : 45.5;
+        }
+        const extraInches = heightInches - baseHeight;
+        if (gender === "male") {
+          return 48 + 2.7 * extraInches;
+        } else {
+          return 45.5 + 2.2 * extraInches;
+        }
+      }
+
+      function calculateDevine(heightInches) {
+        const baseHeight = 60;
+        if (heightInches <= baseHeight) {
+          return gender === "male" ? 50 : 45.5;
+        }
+        const extraInches = heightInches - baseHeight;
+        if (gender === "male") {
+          return 50 + 2.3 * extraInches;
+        } else {
+          return 45.5 + 2.3 * extraInches;
+        }
+      }
+
+      function calculateRobinson(heightInches) {
+        const baseHeight = 60;
+        if (heightInches <= baseHeight) {
+          return gender === "male" ? 52 : 49;
+        }
+        const extraInches = heightInches - baseHeight;
+        if (gender === "male") {
+          return 52 + 1.9 * extraInches;
+        } else {
+          return 49 + 1.7 * extraInches;
+        }
+      }
+
+      function calculateMiller(heightInches) {
+        const baseHeight = 60;
+        if (heightInches <= baseHeight) {
+          return gender === "male" ? 56.2 : 53.1;
+        }
+        const extraInches = heightInches - baseHeight;
+        if (gender === "male") {
+          return 56.2 + 1.41 * extraInches;
+        } else {
+          return 53.1 + 1.36 * extraInches;
+        }
+      }
+
+      function drawWeightRangeVisualization(
+        currentWeight,
+        minWeight,
+        maxWeight
+      ) {
+        const rangeSpan = maxWeight - minWeight;
+        const buffer = rangeSpan * 0.2;
+        const vizMin = minWeight - buffer;
+        const vizMax = maxWeight + buffer;
+        const vizSpan = vizMax - vizMin;
+
+        let markerPosition = ((currentWeight - vizMin) / vizSpan) * 100;
+        markerPosition = Math.max(0, Math.min(100, markerPosition));
+
+        const html = `
+    <h3 style="color: #2c3e50; margin-bottom: 15px;">Your Weight Position</h3>
+    <div style="position: relative; margin: 20px 0;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px; color: #777;">
+        <span>${vizMin.toFixed(0)} kg</span>
+        <span>Healthy Range</span>
+        <span>${vizMax.toFixed(0)} kg</span>
+      </div>
+      <div class="weight-range-bar">
+        <div class="current-weight-marker" style="left: ${markerPosition}%;"></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 5px; font-size: 11px; color: #555;">
+        <span>Underweight</span>
+        <span>Ideal</span>
+        <span>Overweight</span>
+      </div>
+    </div>
+  `;
+
+        document.getElementById("weightRangeViz").innerHTML = html;
+      }
+
+      function drawCharts(results, heightM) {
+        if (formulaChart) formulaChart.destroy();
+        if (bmiChart) bmiChart.destroy();
+
+        const formulaCtx = document.getElementById("formulaChart");
+        if (formulaCtx) {
+          formulaChart = new Chart(formulaCtx.getContext("2d"), {
+            type: "bar",
+            data: {
+              labels: ["BMI", "Hamwi", "Devine", "Robinson", "Miller"],
+              datasets: [
+                {
+                  label: "Ideal Weight (kg)",
+                  data: [
+                    results.bmi,
+                    results.hamwi,
+                    results.devine,
+                    results.robinson,
+                    results.miller,
+                  ],
+                  backgroundColor: [
+                    "#3498db",
+                    "#27ae60",
+                    "#f39c12",
+                    "#e74c3c",
+                    "#9b59b6",
+                  ],
+                  borderRadius: 5,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    callback: function (value) {
+                      return value + " kg";
+                    },
+                  },
+                },
+              },
+              plugins: {
+                legend: {
+                  display: false,
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      return context.parsed.y.toFixed(1) + " kg";
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }
+
+        const currentWeight = parseFloat(
+          document.getElementById("currentWeight").value
+        );
+        let currentBMI = 0;
+        if (currentWeight && currentWeight > 0) {
+          const currentKg =
+            weightUnit === "kg" ? currentWeight : currentWeight / 2.20462;
+          currentBMI = currentKg / (heightM * heightM);
+        }
+
+        const bmiCtx = document.getElementById("bmiChart");
+        if (bmiCtx) {
+          const bmiCategories = {
+            Underweight: currentBMI > 0 && currentBMI < 18.5 ? currentBMI : 0,
+            Normal: currentBMI >= 18.5 && currentBMI < 25 ? currentBMI : 0,
+            Overweight: currentBMI >= 25 && currentBMI < 30 ? currentBMI : 0,
+            Obese: currentBMI >= 30 ? currentBMI : 0,
+          };
+
+          bmiChart = new Chart(bmiCtx.getContext("2d"), {
+            type: "doughnut",
+            data: {
+              labels: [
+                "Underweight (<18.5)",
+                "Normal (18.5-24.9)",
+                "Overweight (25-29.9)",
+                "Obese (30+)",
+              ],
+              datasets: [
+                {
+                  data: [18.5, 6.4, 5, 10],
+                  backgroundColor: ["#3498db", "#27ae60", "#f39c12", "#e74c3c"],
+                  borderColor: "#e0e5ec",
+                  borderWidth: 2,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    padding: 10,
+                    font: { size: 11 },
+                  },
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      return context.label;
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }
+      }
+
+      function showFormulaDetails(heightCm, heightInches, results, avgWeight) {
+        const calculationExample =
+          document.getElementById("calculationExample");
+
+        if (calculationExample) {
+          calculationExample.innerHTML = `
+      <strong>Your Measurements:</strong><br>
+      Height: ${heightCm.toFixed(1)} cm (${heightInches.toFixed(1)} inches)<br>
+      Age: ${document.getElementById("age").value} years<br>
+      Gender: ${gender}<br>
+      Body Frame: ${bodyFrame}<br><br>
+
+      <strong>Calculated Ideal Weights:</strong><br>
+      BMI Method: ${results.bmi.toFixed(1)} kg<br>
+      Hamwi Formula: ${results.hamwi.toFixed(1)} kg<br>
+      Devine Formula: ${results.devine.toFixed(1)} kg<br>
+      Robinson Formula: ${results.robinson.toFixed(1)} kg<br>
+      Miller Formula: ${results.miller.toFixed(1)} kg<br><br>
+
+      <strong>Average Ideal Weight: ${avgWeight.toFixed(1)} kg</strong><br>
+      <em>Frame adjustment (${bodyFrame}): ${
+            bodyFrame === "small"
+              ? "90%"
+              : bodyFrame === "large"
+              ? "110%"
+              : "100%"
+          }</em>
+    `;
+        }
+      }
+
+      function calculateWeightPlan() {
+        const currentWeight = parseFloat(
+          document.getElementById("currentWeight").value
+        );
+        const weeks = parseInt(
+          document.getElementById("targetTimeframe").value
+        );
+
+        if (!currentWeight || currentWeight <= 0) {
+          alert("Please enter your current weight first");
+          return;
+        }
+
+        if (!weeks || weeks <= 0) {
+          alert("Please enter valid timeframe");
+          return;
+        }
+
+        const currentKg =
+          weightUnit === "kg" ? currentWeight : currentWeight / 2.20462;
+        const targetWeight = parseFloat(
+          document.getElementById("idealWeightAvg").textContent
+        );
+        const weightDiff = targetWeight - currentKg;
+        const weightPerWeek = weightDiff / weeks;
+        const caloriesPerWeek = weightPerWeek * 7700;
+        const caloriesPerDay = caloriesPerWeek / 7;
+
+        const height = parseFloat(document.getElementById("height").value);
+        const age = parseInt(document.getElementById("age").value);
+        const heightCm = heightUnit === "cm" ? height : height * 2.54;
+        const heightM = heightCm / 100;
+
+        const bmr =
+          gender === "male"
+            ? 10 * currentKg + 6.25 * heightCm - 5 * age + 5
+            : 10 * currentKg + 6.25 * heightCm - 5 * age - 161;
+
+        const tdee = bmr * 1.55;
+        const recommendedIntake = tdee + caloriesPerDay;
+
+        const resultHTML = `
+    <div style="background: #f5f7fa; padding: 15px; border-radius: 10px; margin-top: 15px;">
+      <h4 style="color: #2c3e50; margin-bottom: 10px;">Your Personalized Weight ${
+        weightDiff > 0 ? "Gain" : "Loss"
+      } Plan</h4>
+      <p style="margin: 8px 0;"><strong>Current Weight:</strong> ${currentKg.toFixed(
+        1
+      )} kg</p>
+      <p style="margin: 8px 0;"><strong>Target Weight:</strong> ${targetWeight.toFixed(
+        1
+      )} kg</p>
+      <p style="margin: 8px 0;"><strong>Weight to ${
+        weightDiff > 0 ? "Gain" : "Lose"
+      }:</strong> ${Math.abs(weightDiff).toFixed(1)} kg</p>
+      <p style="margin: 8px 0;"><strong>Weekly Goal:</strong> ${Math.abs(
+        weightPerWeek
+      ).toFixed(2)} kg/week</p>
+      <p style="margin: 8px 0;"><strong>Daily Calorie ${
+        weightDiff > 0 ? "Surplus" : "Deficit"
+      }:</strong> ${Math.abs(Math.round(caloriesPerDay))} cal</p>
+      <hr style="margin: 15px 0; border: none; border-top: 1px solid #ccc;">
+      <h4 style="color: #2c3e50; margin-bottom: 10px;">Daily Recommendations</h4>
+      <p style="margin: 8px 0;"><strong>Your BMR:</strong> ${Math.round(
+        bmr
+      )} cal/day</p>
+      <p style="margin: 8px 0;"><strong>Your TDEE:</strong> ${Math.round(
+        tdee
+      )} cal/day</p>
+      <p style="margin: 8px 0;"><strong>Target Daily Intake:</strong> ${Math.round(
+        recommendedIntake
+      )} cal/day</p>
+      <div style="background: ${
+        Math.abs(weightPerWeek) > 1 ? "#e74c3c" : "#27ae60"
+      }; color: white; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;">
+        ${
+          Math.abs(weightPerWeek) > 1
+            ? "⚠️ This rate may be too aggressive. Safe rate: 0.5-1 kg per week"
+            : "✅ This is a healthy and sustainable rate"
+        }
+      </div>
+      <div style="margin-top: 15px; padding: 12px; background: white; border-radius: 8px;">
+        <strong>Weekly Milestones:</strong><br>
+        Week 4: ${(currentKg + weightPerWeek * 4).toFixed(1)} kg<br>
+        Week 8: ${(currentKg + weightPerWeek * 8).toFixed(1)} kg<br>
+        Week ${weeks}: ${targetWeight.toFixed(1)} kg (Goal!)
+      </div>
+    </div>
+  `;
+
+        document.getElementById("weightPlanResults").innerHTML = resultHTML;
+      }
+
+      function resetForm() {
+        document.getElementById("height").value = 170;
+        document.getElementById("age").value = 30;
+        document.getElementById("currentWeight").value = "";
+        document.getElementById("targetTimeframe").value = 12;
+        setGender("male");
+        setFrame("medium");
+
+        document.getElementById("resultsSection").classList.add("hidden");
+        document.getElementById("formulaDetails").classList.add("hidden");
+        document.getElementById("weightPlanSection").classList.add("hidden");
+
+        if (formulaChart) {
+          formulaChart.destroy();
+          formulaChart = null;
+        }
+        if (bmiChart) {
+          bmiChart.destroy();
+          bmiChart = null;
+        }
+
+        if (window.innerWidth < 768) {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+
+      function toggleFormulas() {
+        const section = document.getElementById("formulaDetails");
+        section.classList.toggle("hidden");
+
+        if (window.innerWidth < 768 && !section.classList.contains("hidden")) {
+          section.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+
+      function toggleWeightPlan() {
+        const section = document.getElementById("weightPlanSection");
+        section.classList.toggle("hidden");
+
+        if (window.innerWidth < 768 && !section.classList.contains("hidden")) {
+          section.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+
+      function downloadPDF() {
+        if (
+          document.getElementById("resultsSection").classList.contains("hidden")
+        ) {
+          alert("Please calculate your ideal weight first");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(18);
+        doc.setTextColor(44, 62, 80);
+        doc.text("Ideal Weight Calculator Results", 105, 15, {
+          align: "center",
+        });
+
+        doc.setFontSize(12);
+        doc.setTextColor(85, 85, 85);
+
+        let yPos = 30;
+        doc.text(
+          "Ideal Weight (Average): " +
+            document.getElementById("idealWeightAvg").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "Healthy Range: " +
+            document.getElementById("healthyRange").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "BMI Range: " + document.getElementById("bmiRange").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "Weight Difference: " +
+            document.getElementById("weightDifference").textContent,
+          20,
+          yPos
+        );
+
+        yPos += 20;
+        doc.setFontSize(14);
+        doc.setTextColor(44, 62, 80);
+        doc.text("Your Details", 20, yPos);
+
+        yPos += 10;
+        doc.setFontSize(11);
+        doc.setTextColor(85, 85, 85);
+        doc.text(
+          "Height: " +
+            document.getElementById("height").value +
+            " " +
+            heightUnit,
+          20,
+          yPos
+        );
+        yPos += 8;
+        doc.text(
+          "Age: " + document.getElementById("age").value + " years",
+          20,
+          yPos
+        );
+        yPos += 8;
+        doc.text("Gender: " + gender, 20, yPos);
+        yPos += 8;
+        doc.text("Body Frame: " + bodyFrame, 20, yPos);
+
+        const currentWeight = document.getElementById("currentWeight").value;
+        if (currentWeight) {
+          yPos += 8;
+          doc.text(
+            "Current Weight: " + currentWeight + " " + weightUnit,
+            20,
+            yPos
+          );
+        }
+
+        yPos += 20;
+        doc.setFontSize(14);
+        doc.setTextColor(44, 62, 80);
+        doc.text("Recommendations", 20, yPos);
+
+        yPos += 10;
+        doc.setFontSize(10);
+        doc.setTextColor(85, 85, 85);
+        doc.text(
+          "• Aim for gradual weight changes (0.5-1 kg per week)",
+          20,
+          yPos
+        );
+        yPos += 7;
+        doc.text("• Combine healthy eating with regular exercise", 20, yPos);
+        yPos += 7;
+        doc.text("• Stay hydrated and get adequate sleep", 20, yPos);
+        yPos += 7;
+        doc.text("• Consult healthcare professionals for guidance", 20, yPos);
+
+        doc.setFontSize(9);
+        doc.setTextColor(150, 150, 150);
+        doc.text("Generated by Ideal Weight Calculator", 105, 280, {
+          align: "center",
+        });
+        doc.text(new Date().toLocaleString(), 105, 285, { align: "center" });
+
+        doc.save("Ideal-Weight-Results.pdf");
+      }
+
+      function shareCalculator() {
+        if (navigator.share) {
+          navigator
+            .share({
+              title: "Ideal Weight Calculator",
+              text: "Calculate your ideal body weight using multiple scientific formulas!",
+              url: window.location.href,
+            })
+            .then(() => console.log("Shared successfully"))
+            .catch((error) => console.log("Error sharing:", error));
+        } else {
+          const url = window.location.href;
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(() => {
+              alert("Link copied to clipboard!");
+            });
+          } else {
+            alert("Sharing not supported on this browser. URL: " + url);
+          }
+        }
+      }
+
+      function toggleDarkMode() {
+        alert("Dark mode feature coming soon!");
+      }
+
+      let resizeTimeout;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          if (
+            !document
+              .getElementById("resultsSection")
+              .classList.contains("hidden")
+          ) {
+            if (formulaChart) formulaChart.resize();
+            if (bmiChart) bmiChart.resize();
+          }
+        }, 250);
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        setGender("male");
+        setFrame("medium");
+
+        const numberInputs = document.querySelectorAll('input[type="number"]');
+        numberInputs.forEach((input) => {
+          input.addEventListener("input", function () {
+            if (this.value < 0) this.value = 0;
+            if (
+              this.hasAttribute("max") &&
+              parseFloat(this.value) > parseFloat(this.getAttribute("max"))
+            ) {
+              this.value = this.getAttribute("max");
+            }
+          });
+        });
+
+        document.addEventListener("keypress", function (e) {
+          if (e.key === "Enter" && e.target.tagName !== "BUTTON") {
+            e.preventDefault();
+            calculateIdealWeight();
+          }
+        });
+
+        if ("ontouchstart" in window) {
+          document.querySelectorAll("button, .toggle-btn").forEach((btn) => {
+            btn.addEventListener("touchstart", function () {
+              this.style.transform = "scale(0.98)";
+            });
+            btn.addEventListener("touchend", function () {
+              this.style.transform = "scale(1)";
+            });
+          });
+        }
+      });
+
+      let lastTouchEnd = 0;
+      document.addEventListener(
+        "touchend",
+        function (event) {
+          const now = new Date().getTime();
+          if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+          }
+          lastTouchEnd = now;
+        },
+        false
+      );
+
+      function setVH() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--vh", `${vh}px`);
+      }
+
+      setVH();
+      window.addEventListener("resize", setVH);
+      window.addEventListener("orientationchange", setVH);
+    </script>
+  </body>
+</html>

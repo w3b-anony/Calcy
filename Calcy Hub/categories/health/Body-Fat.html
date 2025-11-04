@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Body Fat Percentage Calculator - Accurate BF% Measurement & Analysis
+    </title>
+    <meta
+      name="description"
+      content="Free Body Fat Percentage Calculator with 4 methods: Navy, Jackson-Pollock, Katch-McArdle, and Circumference. Get accurate BF% results, category analysis, and personalized recommendations."
+    />
+    <meta
+      name="keywords"
+      content="body fat calculator, body fat percentage, BF% calculator, body composition, Navy method, Jackson-Pollock, Katch-McArdle, skinfold calculator, fitness calculator"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-bg: #e0e5ec;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #e0e5ec;
+        color: #333;
+        padding: 10px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header {
+        background: var(--primary-bg);
+        padding: 10px 12px;
+        border: 1px solid #9aa3af;
+        border-radius: 10px;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: nowrap;
+      }
+
+      .back-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        padding: 8px 12px;
+        border-radius: 10px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        color: #555;
+        font-size: 12px;
+        transition: all 0.3s;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .back-btn:hover {
+        box-shadow: inset 3px 3px 7px #a3b1c6, inset -3px -3px 7px #ffffff;
+      }
+
+      .header-center {
+        flex: 1;
+        text-align: center;
+        min-width: 0;
+      }
+
+      .header-center h1 {
+        font-size: 16px;
+        margin-bottom: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+
+      .icon-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .icon-btn:active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .card {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 15px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .card h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+        color: #2c502e;
+      }
+
+      .input-group {
+        margin-bottom: 12px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+        font-size: 13px;
+      }
+
+      input[type="number"],
+      select {
+        width: 100%;
+        padding: 7px 15px;
+        border: none;
+        border-radius: 10px;
+        border: 1px solid #9aa3af;
+        background: var(--primary-bg);
+        box-shadow: inset 0px 0px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        font-size: 14px;
+        color: #333;
+        transition: all 0.3s;
+      }
+
+      input[type="number"]:focus,
+      select:focus {
+        outline: none;
+        box-shadow: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+      }
+
+      .unit-toggle {
+        display: inline-block;
+        margin-left: 10px;
+        font-size: 11px;
+        color: #777;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      .toggle-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .toggle-btn {
+        flex: 1;
+        min-width: 80px;
+        padding: 7px 15px;
+        border: none;
+        border-radius: 10px;
+        border: 1px solid #9aa3afdf;
+        background: var(--primary-bg);
+        box-shadow: 0px 0px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        cursor: pointer;
+        font-size: 13px;
+        color: #555;
+        transition: all 0.3s;
+      }
+
+      .toggle-btn.active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        color: #e67e22;
+        font-weight: 600;
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .calculate-btn {
+        flex: 2;
+        min-width: 150px;
+        padding: 14px 30px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(145deg, #e67e22, #d35400);
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .calculate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 8px 8px 16px #a3b1c6, -8px -8px 16px #ffffff;
+      }
+
+      .calculate-btn:active {
+        transform: translateY(0);
+        box-shadow: inset 2px 2px 8px #d35400, inset -4px -4px 8px #f39c12;
+      }
+
+      .reset-btn {
+        flex: 1;
+        min-width: 100px;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 12px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .reset-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .result-item {
+        background: var(--primary-bg);
+        padding: 10px;
+        border-radius: 12px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        text-align: center;
+      }
+
+      .result-label {
+        font-size: 9px;
+        color: #777;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .result-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2c3e50;
+        word-break: break-word;
+      }
+
+      .body-fat-category {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        margin-bottom: 15px;
+      }
+
+      .category-bar {
+        width: 100%;
+        height: 30px;
+        background: linear-gradient(90deg, #27ae60, #f39c12, #e74c3c);
+        border-radius: 8px;
+        position: relative;
+        margin-bottom: 10px;
+      }
+
+      .category-indicator {
+        position: absolute;
+        width: 3px;
+        height: 100%;
+        background: #2c3e50;
+        border-radius: 1px;
+        top: 0;
+      }
+
+      .category-labels {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 5px;
+        font-size: 11px;
+        text-align: center;
+        color: #555;
+      }
+
+      .category-labels span {
+        font-weight: 600;
+      }
+
+      .charts-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .chart-wrapper {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 9px 9px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .chart-wrapper h3 {
+        margin-bottom: 15px;
+        color: #2c3e50;
+        font-size: 16px;
+      }
+
+      .chart-wrapper canvas {
+        max-height: 150px;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .action-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 140px;
+        justify-content: center;
+      }
+
+      .action-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+
+      .info-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .info-card {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid #9aa3af;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .info-card h3 {
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 16px;
+      }
+
+      .info-card p,
+      .info-card ul {
+        color: #555;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+
+      .info-card ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .info-card li {
+        padding-left: 20px;
+        position: relative;
+        margin-bottom: 8px;
+      }
+
+      .info-card li:before {
+        content: "•";
+        position: absolute;
+        left: 8px;
+        color: #e67e22;
+        font-weight: bold;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .calculation-steps {
+        margin-top: 20px;
+        padding: 15px;
+        background: var(--primary-bg);
+        border-radius: 12px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      .calculation-steps h3 {
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 16px;
+      }
+
+      .formula {
+        background: #f5f7fa;
+        padding: 12px;
+        border-radius: 8px;
+        margin: 12px 0;
+        font-family: "Courier New", monospace;
+        overflow-x: auto;
+        font-size: 12px;
+      }
+
+      .cards {
+        background: var(--primary-bg);
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 15px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .cards h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+        color: #2c502e;
+      }
+
+      .method-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+
+      .method-tab {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 8px;
+        background: var(--primary-bg);
+        color: #555;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .method-tab.active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+        color: #e67e22;
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 8px;
+        }
+
+        .header {
+          padding: 8px 10px;
+          gap: 6px;
+        }
+
+        .header-center h1 {
+          font-size: 17px;
+          margin-bottom: 3px;
+        }
+
+        .back-btn {
+          display: none;
+        }
+
+        .card {
+          padding: 12px;
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .result-value {
+          font-size: 14px;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+
+        .action-btn {
+          width: 100%;
+          min-width: auto;
+        }
+      }
+
+      @media (min-width: 768px) {
+        body {
+          padding: 20px;
+        }
+
+        .header {
+          padding: 12px 15px;
+        }
+
+        .header-center h1 {
+          font-size: 20px;
+        }
+
+        .main-content {
+          grid-template-columns: 1fr 1fr;
+          gap: 25px;
+        }
+
+        .card {
+          padding: 20px;
+        }
+
+        .card h2 {
+          font-size: 22px;
+        }
+
+        .results-grid {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 20px;
+        }
+
+        .result-value {
+          font-size: 24px;
+        }
+
+        .charts-container {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 25px;
+        }
+
+        .info-cards {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 25px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <button class="back-btn" onclick="window.history.back()">
+          <span>←</span> Go Back
+        </button>
+        <div class="header-center">
+          <h1>Body Fat Percentage Calculator</h1>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" onclick="shareCalculator()" title="Share">
+            📤
+          </button>
+          <button class="icon-btn" onclick="downloadPDF()" title="Download PDF">
+            📄
+          </button>
+          <button
+            class="icon-btn"
+            onclick="toggleDarkMode()"
+            title="Toggle Theme"
+          >
+            🌓
+          </button>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="card">
+          <h2>Personal Details</h2>
+
+          <div class="input-group">
+            <label for="weight">
+              Weight
+              <span
+                class="unit-toggle"
+                id="weightUnit"
+                onclick="toggleWeightUnit()"
+                >kg</span
+              >
+            </label>
+            <input
+              type="number"
+              id="weight"
+              value="70"
+              min="20"
+              max="300"
+              step="0.1"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="height">
+              Height
+              <span
+                class="unit-toggle"
+                id="heightUnit"
+                onclick="toggleHeightUnit()"
+                >cm</span
+              >
+            </label>
+            <input
+              type="number"
+              id="height"
+              value="170"
+              min="50"
+              max="250"
+              step="0.1"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="age">Age (years)</label>
+            <input type="number" id="age" value="30" min="10" max="100" />
+          </div>
+
+          <div class="input-group">
+            <label>Gender</label>
+            <div class="toggle-group">
+              <button
+                class="toggle-btn active"
+                id="genderMale"
+                onclick="setGender('male')"
+              >
+                Male
+              </button>
+              <button
+                class="toggle-btn"
+                id="genderFemale"
+                onclick="setGender('female')"
+              >
+                Female
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>About Body Fat %</h2>
+          <div style="color: #555; line-height: 1.8">
+            <p style="margin-bottom: 15px">
+              📊 <strong>Essential Fat</strong> - Needed for vital functions
+            </p>
+            <p style="margin-bottom: 15px">
+              💪 <strong>Multiple Methods</strong> - Navy, Jackson-Pollock,
+              Katch-McArdle
+            </p>
+            <p style="margin-bottom: 15px">
+              🎯 <strong>Body Composition</strong> - More accurate than BMI
+            </p>
+            <p style="margin-bottom: 15px">
+              ⚖️ <strong>Health Indicator</strong> - Important fitness metric
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards full-width">
+        <h2>Measurement Method</h2>
+
+        <div class="method-tabs">
+          <button class="method-tab active" onclick="setMethod('navy')">
+            Navy Method
+          </button>
+          <button class="method-tab" onclick="setMethod('jackson')">
+            Jackson-Pollock 3
+          </button>
+          <button class="method-tab" onclick="setMethod('katch')">
+            Katch-McArdle
+          </button>
+          <button class="method-tab" onclick="setMethod('circumference')">
+            Circumference
+          </button>
+        </div>
+
+        <div id="navyMethod" class="input-group">
+          <label for="abdomen">Abdomen Circumference (cm)</label>
+          <input
+            type="number"
+            id="abdomen"
+            value="80"
+            min="30"
+            max="200"
+            step="0.1"
+          />
+          <label for="neck" style="margin-top: 12px"
+            >Neck Circumference (cm)</label
+          >
+          <input
+            type="number"
+            id="neck"
+            value="35"
+            min="20"
+            max="100"
+            step="0.1"
+          />
+          <label for="hip" style="margin-top: 12px"
+            >Hip Circumference (cm) - Women only</label
+          >
+          <input
+            type="number"
+            id="hip"
+            value="95"
+            min="50"
+            max="200"
+            step="0.1"
+          />
+        </div>
+
+        <div id="jacksonMethod" class="input-group hidden">
+          <label for="triceps">Triceps Skinfold (mm)</label>
+          <input
+            type="number"
+            id="triceps"
+            value="15"
+            min="0"
+            max="100"
+            step="0.1"
+          />
+          <label for="biceps" style="margin-top: 12px"
+            >Biceps Skinfold (mm)</label
+          >
+          <input
+            type="number"
+            id="biceps"
+            value="10"
+            min="0"
+            max="100"
+            step="0.1"
+          />
+          <label for="subscapular" style="margin-top: 12px"
+            >Subscapular Skinfold (mm)</label
+          >
+          <input
+            type="number"
+            id="subscapular"
+            value="18"
+            min="0"
+            max="100"
+            step="0.1"
+          />
+          <label for="suprailiac" style="margin-top: 12px"
+            >Suprailiac Skinfold (mm)</label
+          >
+          <input
+            type="number"
+            id="suprailiac"
+            value="12"
+            min="0"
+            max="100"
+            step="0.1"
+          />
+        </div>
+
+        <div id="katchMethod" class="input-group hidden">
+          <p style="color: #777; margin-bottom: 12px; font-size: 13px">
+            Katch-McArdle uses body weight and lean body mass. Fill in
+            additional measurements or we'll estimate based on your profile.
+          </p>
+          <label for="leanMass">Lean Body Mass (kg)</label>
+          <input
+            type="number"
+            id="leanMass"
+            value="55"
+            min="10"
+            max="200"
+            step="0.1"
+          />
+        </div>
+
+        <div id="circumferenceMethod" class="input-group hidden">
+          <label for="waist">Waist Circumference (cm)</label>
+          <input
+            type="number"
+            id="waist"
+            value="80"
+            min="30"
+            max="200"
+            step="0.1"
+          />
+          <label for="hipCirc" style="margin-top: 12px"
+            >Hip Circumference (cm)</label
+          >
+          <input
+            type="number"
+            id="hipCirc"
+            value="95"
+            min="50"
+            max="200"
+            step="0.1"
+          />
+          <label for="wrist" style="margin-top: 12px"
+            >Wrist Circumference (cm)</label
+          >
+          <input
+            type="number"
+            id="wrist"
+            value="17"
+            min="10"
+            max="35"
+            step="0.1"
+          />
+        </div>
+
+        <div class="btn-group">
+          <button class="calculate-btn" onclick="calculateBodyFat()">
+            Calculate Body Fat %
+          </button>
+          <button class="reset-btn" onclick="resetForm()">Reset</button>
+        </div>
+      </div>
+
+      <div class="cards full-width hidden" id="resultsSection">
+        <h2>Your Results</h2>
+
+        <div class="results-grid">
+          <div class="result-item">
+            <div class="result-label">Body Fat %</div>
+            <div class="result-value" id="bodyFatPercentage">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Body Fat Mass</div>
+            <div class="result-value" id="bodyFatMass">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Lean Mass</div>
+            <div class="result-value" id="leanBodyMass">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Category</div>
+            <div class="result-value" id="categoryLabel">-</div>
+          </div>
+        </div>
+
+        <div class="body-fat-category">
+          <h3 style="margin-bottom: 12px; color: #2c3e50">Your Position</h3>
+          <div class="category-bar">
+            <div class="category-indicator" id="categoryIndicator"></div>
+          </div>
+          <div class="category-labels">
+            <span>Essential</span>
+            <span>Athlete</span>
+            <span>Fitness</span>
+            <span>Overweight</span>
+          </div>
+        </div>
+
+        <div class="charts-container">
+          <div class="chart-wrapper">
+            <h3>Body Composition</h3>
+            <canvas id="bodyCompositionChart"></canvas>
+          </div>
+          <div class="chart-wrapper">
+            <h3>Category Comparison</h3>
+            <canvas id="categoryComparisonChart"></canvas>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="action-btn" onclick="downloadPDF()">
+            📄 Download Report
+          </button>
+          <button class="action-btn" onclick="toggleSteps()">
+            📊 View Details
+          </button>
+        </div>
+
+        <div class="calculation-steps hidden" id="calculationSteps">
+          <h3>Detailed Breakdown</h3>
+          <div class="formula" id="formulaDisplay"></div>
+          <div
+            id="calculationExample"
+            style="margin-top: 15px; color: #555; line-height: 1.8"
+          ></div>
+        </div>
+      </div>
+
+      <div class="info-cards">
+        <div class="info-card">
+          <h3>Body Fat Categories</h3>
+          <ul>
+            <li>
+              <strong>Essential Fat:</strong> 2-5% (men), 10-13% (women) -
+              Minimum needed for health
+            </li>
+            <li>
+              <strong>Athletes:</strong> 6-13% (men), 14-20% (women) - Peak
+              fitness condition
+            </li>
+            <li>
+              <strong>Fitness:</strong> 14-17% (men), 21-24% (women) - Good
+              health and appearance
+            </li>
+            <li>
+              <strong>Overweight:</strong> 18-24% (men), 25-31% (women) -
+              Acceptable but higher risk
+            </li>
+            <li>
+              <strong>Obese:</strong> 25%+ (men), 32%+ (women) - Health concerns
+            </li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h3>How to Use This Calculator</h3>
+          <ul>
+            <li>Enter your height, weight, age, and gender</li>
+            <li>Choose your preferred measurement method</li>
+            <li>
+              Provide the required measurements (circumferences or skinfolds)
+            </li>
+            <li>Click "Calculate Body Fat %" to see detailed results</li>
+            <li>View your body composition breakdown and category</li>
+            <li>Download your complete report for future reference</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h3>Measurement Methods Explained</h3>
+          <p>
+            <strong>Navy Method:</strong> Uses neck, abdomen, and hip (women)
+            circumferences. Simple and effective for general population.
+          </p>
+          <p style="margin-top: 10px">
+            <strong>Jackson-Pollock:</strong> Measures 3-site skinfolds.
+            Requires calipers but highly accurate when properly done.
+          </p>
+          <p style="margin-top: 10px">
+            <strong>Katch-McArdle:</strong> Based on lean body mass. Good if you
+            have accurate lean mass measurement.
+          </p>
+          <p style="margin-top: 10px">
+            <strong>Circumference:</strong> Uses waist, hip, and wrist
+            measurements. Non-invasive and easy to perform at home.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Body Fat Percentage Calculator - JavaScript Code
+
+      let gender = "male";
+      let weightUnit = "kg";
+      let heightUnit = "cm";
+      let currentMethod = "navy";
+      let bodyCompositionChart, categoryComparisonChart;
+
+      function setGender(g) {
+        gender = g;
+        document
+          .getElementById("genderMale")
+          .classList.toggle("active", g === "male");
+        document
+          .getElementById("genderFemale")
+          .classList.toggle("active", g === "female");
+      }
+
+      function toggleWeightUnit() {
+        const input = document.getElementById("weight");
+        const unitSpan = document.getElementById("weightUnit");
+
+        if (weightUnit === "kg") {
+          weightUnit = "lbs";
+          input.value = (parseFloat(input.value) * 2.20462).toFixed(1);
+          unitSpan.textContent = "lbs";
+        } else {
+          weightUnit = "kg";
+          input.value = (parseFloat(input.value) / 2.20462).toFixed(1);
+          unitSpan.textContent = "kg";
+        }
+      }
+
+      function toggleHeightUnit() {
+        const input = document.getElementById("height");
+        const unitSpan = document.getElementById("heightUnit");
+
+        if (heightUnit === "cm") {
+          heightUnit = "in";
+          input.value = (parseFloat(input.value) / 2.54).toFixed(1);
+          unitSpan.textContent = "in";
+        } else {
+          heightUnit = "cm";
+          input.value = (parseFloat(input.value) * 2.54).toFixed(1);
+          unitSpan.textContent = "cm";
+        }
+      }
+
+      function setMethod(method) {
+        currentMethod = method;
+        document
+          .querySelectorAll(".method-tab")
+          .forEach((tab) => tab.classList.remove("active"));
+        event.target.classList.add("active");
+
+        document.getElementById("navyMethod").classList.add("hidden");
+        document.getElementById("jacksonMethod").classList.add("hidden");
+        document.getElementById("katchMethod").classList.add("hidden");
+        document.getElementById("circumferenceMethod").classList.add("hidden");
+
+        if (method === "navy")
+          document.getElementById("navyMethod").classList.remove("hidden");
+        else if (method === "jackson")
+          document.getElementById("jacksonMethod").classList.remove("hidden");
+        else if (method === "katch")
+          document.getElementById("katchMethod").classList.remove("hidden");
+        else if (method === "circumference")
+          document
+            .getElementById("circumferenceMethod")
+            .classList.remove("hidden");
+      }
+
+      function calculateNavyBodyFat(weight, height, age) {
+        const weightKg = weightUnit === "kg" ? weight : weight / 2.20462;
+        const heightCm = heightUnit === "cm" ? height : height * 2.54;
+        const abdomen = parseFloat(document.getElementById("abdomen").value);
+        const neck = parseFloat(document.getElementById("neck").value);
+
+        let bodyFat;
+        if (gender === "male") {
+          bodyFat =
+            495 /
+              (1.0324 -
+                0.19077 * Math.log10(abdomen - neck) +
+                0.15456 * Math.log10(heightCm)) -
+            450;
+        } else {
+          const hip = parseFloat(document.getElementById("hip").value);
+          bodyFat =
+            495 /
+              (1.29579 -
+                0.35004 * Math.log10(abdomen + hip - neck) +
+                0.221 * Math.log10(heightCm)) -
+            450;
+        }
+
+        return Math.max(0, Math.min(bodyFat, 100));
+      }
+
+      function calculateJacksonPollock(weight, height, age) {
+        const triceps = parseFloat(document.getElementById("triceps").value);
+        const biceps = parseFloat(document.getElementById("biceps").value);
+        const subscapular = parseFloat(
+          document.getElementById("subscapular").value
+        );
+        const suprailiac = parseFloat(
+          document.getElementById("suprailiac").value
+        );
+        const sum = triceps + biceps + subscapular + suprailiac;
+
+        let bodyDensity;
+        if (gender === "male") {
+          bodyDensity =
+            1.10938 - 0.0008267 * sum + 0.0000016 * sum * sum - 0.0002574 * age;
+        } else {
+          bodyDensity =
+            1.0994921 -
+            0.0009929 * sum +
+            0.0000023 * sum * sum -
+            0.0001392 * age;
+        }
+
+        const bodyFat = 495 / bodyDensity - 450;
+        return Math.max(0, Math.min(bodyFat, 100));
+      }
+
+      function calculateKatchMcArdle(weight) {
+        const weightKg = weightUnit === "kg" ? weight : weight / 2.20462;
+        const leanMass = parseFloat(document.getElementById("leanMass").value);
+
+        const bodyFat = ((weightKg - leanMass) / weightKg) * 100;
+        return Math.max(0, Math.min(bodyFat, 100));
+      }
+
+      function calculateCircumference(weight, height) {
+        const weightKg = weightUnit === "kg" ? weight : weight / 2.20462;
+        const heightCm = heightUnit === "cm" ? height : height * 2.54;
+        const waist = parseFloat(document.getElementById("waist").value);
+        const hipCirc = parseFloat(document.getElementById("hipCirc").value);
+        const wrist = parseFloat(document.getElementById("wrist").value);
+
+        let bodyFat;
+        if (gender === "male") {
+          bodyFat =
+            1.0808 * Math.log10(waist - wrist) -
+            0.1734 * Math.log10(heightCm) +
+            8.8681;
+        } else {
+          bodyFat =
+            1.189 * Math.log10(waist + hipCirc - wrist) -
+            0.413 * Math.log10(heightCm) +
+            12.171;
+        }
+
+        return Math.max(0, Math.min(bodyFat, 100));
+      }
+
+      function getBodyFatCategory(bf) {
+        if (gender === "male") {
+          if (bf <= 5) return { name: "Essential Fat", color: "#27ae60" };
+          if (bf <= 13) return { name: "Athlete", color: "#2ecc71" };
+          if (bf <= 17) return { name: "Fitness", color: "#f39c12" };
+          if (bf <= 24) return { name: "Overweight", color: "#e74c3c" };
+          return { name: "Obese", color: "#c0392b" };
+        } else {
+          if (bf <= 13) return { name: "Essential Fat", color: "#27ae60" };
+          if (bf <= 20) return { name: "Athlete", color: "#2ecc71" };
+          if (bf <= 24) return { name: "Fitness", color: "#f39c12" };
+          if (bf <= 31) return { name: "Overweight", color: "#e74c3c" };
+          return { name: "Obese", color: "#c0392b" };
+        }
+      }
+
+      function calculateBodyFat() {
+        const weight = parseFloat(document.getElementById("weight").value);
+        const height = parseFloat(document.getElementById("height").value);
+        const age = parseInt(document.getElementById("age").value);
+
+        if (
+          !weight ||
+          weight <= 0 ||
+          !height ||
+          height <= 0 ||
+          !age ||
+          age <= 0
+        ) {
+          alert("Please enter valid personal details");
+          return;
+        }
+
+        let bodyFatPercentage;
+
+        if (currentMethod === "navy") {
+          bodyFatPercentage = calculateNavyBodyFat(weight, height, age);
+        } else if (currentMethod === "jackson") {
+          bodyFatPercentage = calculateJacksonPollock(weight, height, age);
+        } else if (currentMethod === "katch") {
+          bodyFatPercentage = calculateKatchMcArdle(weight);
+        } else if (currentMethod === "circumference") {
+          bodyFatPercentage = calculateCircumference(weight, height);
+        }
+
+        const weightKg = weightUnit === "kg" ? weight : weight / 2.20462;
+        const bodyFatMass = (bodyFatPercentage / 100) * weightKg;
+        const leanBodyMass = weightKg - bodyFatMass;
+
+        const category = getBodyFatCategory(bodyFatPercentage);
+
+        document.getElementById("resultsSection").classList.remove("hidden");
+        document.getElementById("bodyFatPercentage").textContent =
+          bodyFatPercentage.toFixed(1) + "%";
+        document.getElementById("bodyFatMass").textContent =
+          bodyFatMass.toFixed(1) + " kg";
+        document.getElementById("leanBodyMass").textContent =
+          leanBodyMass.toFixed(1) + " kg";
+        document.getElementById("categoryLabel").textContent = category.name;
+
+        const categoryRanges =
+          gender === "male"
+            ? { essential: 5, athlete: 13, fitness: 17, overweight: 24 }
+            : { essential: 13, athlete: 20, fitness: 24, overweight: 31 };
+
+        let position = 0;
+        if (bodyFatPercentage <= categoryRanges.essential) position = 10;
+        else if (bodyFatPercentage <= categoryRanges.athlete) position = 35;
+        else if (bodyFatPercentage <= categoryRanges.fitness) position = 60;
+        else if (bodyFatPercentage <= categoryRanges.overweight) position = 85;
+        else position = 95;
+
+        document.getElementById("categoryIndicator").style.left =
+          position + "%";
+
+        drawCharts(bodyFatPercentage, bodyFatMass, leanBodyMass);
+        showCalculationSteps(
+          bodyFatPercentage,
+          bodyFatMass,
+          leanBodyMass,
+          weight,
+          height,
+          age
+        );
+
+        if (window.innerWidth < 768) {
+          document
+            .getElementById("resultsSection")
+            .scrollIntoView({ behavior: "smooth" });
+        }
+      }
+
+      function drawCharts(bodyFat, fatMass, leanMass) {
+        if (bodyCompositionChart) bodyCompositionChart.destroy();
+        if (categoryComparisonChart) categoryComparisonChart.destroy();
+
+        // Body Composition Pie Chart
+        const compCtx = document.getElementById("bodyCompositionChart");
+        if (compCtx) {
+          bodyCompositionChart = new Chart(compCtx.getContext("2d"), {
+            type: "doughnut",
+            data: {
+              labels: ["Body Fat", "Lean Mass"],
+              datasets: [
+                {
+                  data: [bodyFat, 100 - bodyFat],
+                  backgroundColor: ["#e74c3c", "#3498db"],
+                  borderColor: "#e0e5ec",
+                  borderWidth: 2,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: { padding: 10, font: { size: 12 } },
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      return (
+                        context.label + ": " + context.parsed.toFixed(1) + "%"
+                      );
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }
+
+        // Category Comparison Bar Chart
+        const catCtx = document.getElementById("categoryComparisonChart");
+        if (catCtx) {
+          const categories =
+            gender === "male"
+              ? { Essential: 5, Athlete: 13, Fitness: 17, Overweight: 24 }
+              : { Essential: 13, Athlete: 20, Fitness: 24, Overweight: 31 };
+
+          categoryComparisonChart = new Chart(catCtx.getContext("2d"), {
+            type: "bar",
+            data: {
+              labels: Object.keys(categories),
+              datasets: [
+                {
+                  label: "Your BF%",
+                  data: Array(Object.keys(categories).length).fill(bodyFat),
+                  backgroundColor: "#e67e22",
+                  borderRadius: 5,
+                },
+                {
+                  label: "Upper Limit",
+                  data: Object.values(categories),
+                  backgroundColor: "#95a5a6",
+                  borderRadius: 5,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    callback: function (v) {
+                      return v + "%";
+                    },
+                  },
+                },
+              },
+              plugins: { legend: { display: true } },
+            },
+          });
+        }
+      }
+
+      function showCalculationSteps(
+        bodyFat,
+        fatMass,
+        leanMass,
+        weight,
+        height,
+        age
+      ) {
+        const calcExample = document.getElementById("calculationExample");
+        const weightKg = weightUnit === "kg" ? weight : weight / 2.20462;
+        const heightCm = heightUnit === "cm" ? height : height * 2.54;
+
+        let formulaText = "";
+        if (currentMethod === "navy") {
+          if (gender === "male") {
+            formulaText = `<strong>Navy Method (Male):</strong><br>
+        BF% = 495 / (1.0324 - 0.19077*log10(Abdomen - Neck) + 0.15456*log10(Height)) - 450`;
+          } else {
+            formulaText = `<strong>Navy Method (Female):</strong><br>
+        BF% = 495 / (1.29579 - 0.35004*log10(Abdomen + Hip - Neck) + 0.221*log10(Height)) - 450`;
+          }
+        } else if (currentMethod === "jackson") {
+          formulaText = `<strong>Jackson-Pollock Method:</strong><br>
+      Body Density = [varies by gender/age]<br>
+      BF% = (495 / Body Density) - 450`;
+        } else if (currentMethod === "katch") {
+          formulaText = `<strong>Katch-McArdle Method:</strong><br>
+      BF% = ((Total Weight - Lean Body Mass) / Total Weight) × 100`;
+        } else if (currentMethod === "circumference") {
+          formulaText = `<strong>Circumference Method:</strong><br>
+      Uses logarithmic equations with waist, hip, and wrist measurements`;
+        }
+
+        if (calcExample) {
+          calcExample.innerHTML = `
+      ${formulaText}
+      <br><br>
+      <strong>Your Details:</strong><br>
+      Weight: ${weightKg.toFixed(1)} kg<br>
+      Height: ${heightCm.toFixed(1)} cm<br>
+      Age: ${age} years<br>
+      Gender: ${gender}<br><br>
+      <strong>Results:</strong><br>
+      Body Fat Percentage: <b>${bodyFat.toFixed(1)}%</b><br>
+      Body Fat Mass: <b>${fatMass.toFixed(1)} kg</b><br>
+      Lean Body Mass: <b>${leanMass.toFixed(1)} kg</b><br><br>
+      <strong>Interpretation:</strong><br>
+      Your body composition indicates ${
+        getBodyFatCategory(bodyFat).name
+      } level fitness.
+    `;
+        }
+
+        document.getElementById("formulaDisplay").innerHTML = formulaText;
+      }
+
+      function resetForm() {
+        document.getElementById("weight").value = 70;
+        document.getElementById("height").value = 170;
+        document.getElementById("age").value = 30;
+        document.getElementById("abdomen").value = 80;
+        document.getElementById("neck").value = 35;
+        document.getElementById("hip").value = 95;
+        document.getElementById("triceps").value = 15;
+        document.getElementById("biceps").value = 10;
+        document.getElementById("subscapular").value = 18;
+        document.getElementById("suprailiac").value = 12;
+        document.getElementById("leanMass").value = 55;
+        document.getElementById("waist").value = 80;
+        document.getElementById("hipCirc").value = 95;
+        document.getElementById("wrist").value = 17;
+
+        setGender("male");
+        setMethod("navy");
+
+        document.getElementById("resultsSection").classList.add("hidden");
+        document.getElementById("calculationSteps").classList.add("hidden");
+
+        if (bodyCompositionChart) {
+          bodyCompositionChart.destroy();
+          bodyCompositionChart = null;
+        }
+        if (categoryComparisonChart) {
+          categoryComparisonChart.destroy();
+          categoryComparisonChart = null;
+        }
+
+        if (window.innerWidth < 768) {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+
+      function toggleSteps() {
+        const stepsSection = document.getElementById("calculationSteps");
+        stepsSection.classList.toggle("hidden");
+
+        if (
+          window.innerWidth < 768 &&
+          !stepsSection.classList.contains("hidden")
+        ) {
+          stepsSection.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+
+      function downloadPDF() {
+        if (
+          document.getElementById("resultsSection").classList.contains("hidden")
+        ) {
+          alert("Please calculate body fat first");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(18);
+        doc.setTextColor(44, 62, 80);
+        doc.text("Body Fat Percentage Calculator Results", 105, 15, {
+          align: "center",
+        });
+
+        doc.setFontSize(12);
+        doc.setTextColor(85, 85, 85);
+
+        let yPos = 30;
+        doc.text(
+          "Body Fat %: " +
+            document.getElementById("bodyFatPercentage").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "Body Fat Mass: " +
+            document.getElementById("bodyFatMass").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "Lean Mass: " + document.getElementById("leanBodyMass").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "Category: " + document.getElementById("categoryLabel").textContent,
+          20,
+          yPos
+        );
+
+        yPos += 20;
+        doc.setFontSize(14);
+        doc.setTextColor(44, 62, 80);
+        doc.text("Personal Details", 20, yPos);
+
+        yPos += 10;
+        doc.setFontSize(11);
+        doc.setTextColor(85, 85, 85);
+        doc.text(
+          "Weight: " +
+            document.getElementById("weight").value +
+            " " +
+            weightUnit,
+          20,
+          yPos
+        );
+        yPos += 8;
+        doc.text(
+          "Height: " +
+            document.getElementById("height").value +
+            " " +
+            heightUnit,
+          20,
+          yPos
+        );
+        yPos += 8;
+        doc.text(
+          "Age: " + document.getElementById("age").value + " years",
+          20,
+          yPos
+        );
+        yPos += 8;
+        doc.text("Gender: " + gender, 20, yPos);
+        yPos += 8;
+        doc.text("Method: " + currentMethod.toUpperCase(), 20, yPos);
+
+        doc.setFontSize(9);
+        doc.setTextColor(150, 150, 150);
+        doc.text("Generated by Body Fat Calculator", 105, 280, {
+          align: "center",
+        });
+        doc.text(new Date().toLocaleString(), 105, 285, { align: "center" });
+
+        doc.save("Body-Fat-Results.pdf");
+      }
+
+      function shareCalculator() {
+        if (navigator.share) {
+          navigator
+            .share({
+              title: "Body Fat Percentage Calculator",
+              text: "Calculate your body fat percentage with multiple methods!",
+              url: window.location.href,
+            })
+            .then(() => console.log("Shared successfully"))
+            .catch((error) => console.log("Error sharing:", error));
+        } else {
+          const url = window.location.href;
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(() => {
+              alert("Link copied to clipboard!");
+            });
+          } else {
+            alert("Sharing not supported. URL: " + url);
+          }
+        }
+      }
+
+      function toggleDarkMode() {
+        alert("Dark mode feature coming soon!");
+      }
+
+      // Responsive chart resize
+      let resizeTimeout;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          if (
+            !document
+              .getElementById("resultsSection")
+              .classList.contains("hidden")
+          ) {
+            if (bodyCompositionChart) bodyCompositionChart.resize();
+            if (categoryComparisonChart) categoryComparisonChart.resize();
+          }
+        }, 250);
+      });
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        setGender("male");
+        setMethod("navy");
+
+        const numberInputs = document.querySelectorAll('input[type="number"]');
+        numberInputs.forEach((input) => {
+          input.addEventListener("input", function () {
+            if (this.value < 0) this.value = 0;
+            if (
+              this.hasAttribute("max") &&
+              parseFloat(this.value) > parseFloat(this.getAttribute("max"))
+            ) {
+              this.value = this.getAttribute("max");
+            }
+          });
+        });
+
+        document.addEventListener("keypress", function (e) {
+          if (e.key === "Enter" && e.target.tagName !== "BUTTON") {
+            e.preventDefault();
+            calculateBodyFat();
+          }
+        });
+
+        if ("ontouchstart" in window) {
+          document.querySelectorAll("button, .toggle-btn").forEach((btn) => {
+            btn.addEventListener("touchstart", function () {
+              this.style.transform = "scale(0.98)";
+            });
+            btn.addEventListener("touchend", function () {
+              this.style.transform = "scale(1)";
+            });
+          });
+        }
+      });
+
+      let lastTouchEnd = 0;
+      document.addEventListener(
+        "touchend",
+        function (event) {
+          const now = new Date().getTime();
+          if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+          }
+          lastTouchEnd = now;
+        },
+        false
+      );
+
+      function setVH() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--vh", `${vh}px`);
+      }
+
+      setVH();
+      window.addEventListener("resize", setVH);
+      window.addEventListener("orientationchange", setVH);
+    </script>
+  </body>
+</html>

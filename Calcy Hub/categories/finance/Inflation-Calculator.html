@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inflation Rate Calculator 💰 - Calculate Future Value & Purchasing Power</title>
+    <meta name="description" content="Modern Neumorphic Inflation Calculator with charts, future value projection, and purchasing power analysis. Calculate how inflation affects your money over time." />
+    <meta name="keywords" content="Inflation Calculator, Future Value Calculator, Purchasing Power, Inflation Rate, Cost of Living, Money Value, Financial Planning, Inflation India" />
+    <meta name="author" content="Calcy Hub" />
+    <link rel="canonical" href="https://calcyhub.com/inflation-calculator" />
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-bg: #e0e5ec;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #e0e5ec;
+        color: #333;
+        padding: 8px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Top Bar */
+      .header {
+        background: var(--primary-bg);
+        padding: 15px;
+        border: 1px solid #9aa3af;
+        border-radius: 10px;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 15px;
+        flex-wrap: nowrap;
+        position: sticky;
+      }
+
+      .back-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        padding: 12px 20px;
+        border-radius: 12px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        color: #555;
+        font-size: 14px;
+        transition: all 0.3s;
+      }
+
+      .back-btn:hover {
+        box-shadow: inset 3px 3px 7px #a3b1c6, inset -3px -3px 7px #ffffff;
+      }
+
+      .back-btn:active {
+        box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+      }
+
+      .header-center {
+        flex: 1;
+        text-align: center;
+      }
+
+      .header-center h1 {
+        font-size: 28px;
+        margin-bottom: 3px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .icon-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.3s;
+        border: none;
+      }
+
+      .icon-btn:active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      /* Main Content */
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      /* Card Style */
+      .card {
+        background: var(--primary-bg);
+        padding: 20px;
+        border-radius: 20px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .card h2 {
+        font-size: 22px;
+        margin-bottom: 15px;
+        color: #2c502e;
+      }
+
+      /* Input Groups */
+      .input-group {
+        margin-bottom: 15px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #555;
+        font-size: 14px;
+      }
+
+      input[type="number"],
+      select {
+        width: 100%;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 12px;
+        border: 1px solid #9aa3af;
+        background: var(--primary-bg);
+        box-shadow: inset 0px 0px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        font-size: 16px;
+        color: #333;
+        transition: all 0.3s;
+      }
+
+      input[type="number"]:focus,
+      select:focus {
+        outline: none;
+        box-shadow: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+      }
+
+      /* Toggle Switch */
+      .toggle-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .toggle-btn {
+        flex: 1;
+        min-width: 100px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 12px;
+        border: 1px solid #9aa3afdf;
+        background: var(--primary-bg);
+        box-shadow: 0px 0px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        cursor: pointer;
+        font-size: 14px;
+        color: #555;
+        transition: all 0.3s;
+      }
+
+      .toggle-btn.active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        color: #e74c3c;
+        font-weight: 600;
+        animation: pulse 3s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 1px 4px rgba(80, 99, 103, 0.3);
+        }
+        50% {
+          transform: scale(1.02);
+          box-shadow: 0 2px 6px rgba(93, 98, 99, 0.4);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 1px 4px rgba(85, 92, 93, 0.3);
+        }
+      }
+
+      /* Buttons */
+      .btn-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+      }
+
+      .calculate-btn {
+        flex: 2;
+        min-width: 200px;
+        padding: 15px 40px;
+        border: none;
+        border-radius: 15px;
+        background: linear-gradient(145deg, #e74c3c, #c0392b);
+        color: var(--primary-bg);
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .calculate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 8px 8px 16px #a3b1c6, -8px -8px 16px #ffffff;
+      }
+
+      .calculate-btn:active {
+        transform: translateY(0);
+        box-shadow: inset 2px 2px 8px #a93226, inset -4px -4px 8px #ec7063;
+      }
+
+      .reset-btn {
+        flex: 1;
+        min-width: 120px;
+        padding: 18px 30px;
+        border: none;
+        border-radius: 15px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .reset-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+
+      .reset-btn:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+
+      /* Results */
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .result-item {
+        background: var(--primary-bg);
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        text-align: center;
+      }
+
+      .result-label {
+        font-size: 13px;
+        color: #777;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .result-value {
+        font-size: 26px;
+        font-weight: 700;
+        color: #2c3e50;
+      }
+
+      /* Charts */
+      .charts-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .chart-wrapper {
+        background: var(--primary-bg);
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 9px 9px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .chart-wrapper h3 {
+        margin-bottom: 20px;
+        color: #2c3e50;
+        font-size: 18px;
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+      }
+
+      .action-btn {
+        padding: 14px 28px;
+        border: none;
+        border-radius: 12px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .action-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+
+      /* Info Cards */
+      .info-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+      }
+
+      .info-card {
+        background: var(--primary-bg);
+        padding: 25px;
+        border-radius: 15px;
+        border: 1px solid #9aa3af;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .info-card h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+
+      .info-card p,
+      .info-card ul {
+        color: #555;
+        line-height: 1.8;
+        font-size: 14px;
+      }
+
+      .info-card ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .info-card li {
+        padding-left: 25px;
+        position: relative;
+        margin-bottom: 10px;
+      }
+
+      .info-card li:before {
+        content: "•";
+        position: absolute;
+        left: 10px;
+        color: #e74c3c;
+        font-weight: bold;
+      }
+
+      /* Hidden Sections */
+      .hidden {
+        display: none;
+      }
+
+      .comparison-section,
+      .calculation-steps {
+        margin-top: 30px;
+        padding: 25px;
+        background: var(--primary-bg);
+        border-radius: 15px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      .calculation-steps h3,
+      .comparison-section h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+      }
+
+      .formula {
+        background: #f5f7fa;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 15px 0;
+        font-family: "Courier New", monospace;
+        overflow-x: auto;
+      }
+
+      .cards {
+        background: var(--primary-bg);
+        padding: 20px;
+        margin-top: 30px;
+        border-radius: 20px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .cards h2 {
+        font-size: 22px;
+        margin-bottom: 15px;
+        color: #2c502e;
+      }
+
+      /* Comparison Table Styling */
+      .comparison-table {
+        margin-top: 18px;
+        border-collapse: collapse;
+        width: 100%;
+        background: #f5f7fa;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0px 0px 8px #a3b1c6, -4px -4px 8px #ffffff;
+      }
+
+      .comparison-table th {
+        background: #e0e5ec;
+        text-align: left;
+        padding: 12px 14px;
+        color: #e74c3c;
+        font-size: 15px;
+        font-weight: 600;
+        border-bottom: 1px solid #d1d9e6;
+      }
+
+      .comparison-table th:nth-child(2) {
+        color: #2980b9;
+      }
+
+      .comparison-table th:nth-child(3) {
+        color: #c0392b;
+      }
+
+      .comparison-table td {
+        padding: 12px 14px;
+        font-size: 15px;
+        color: #333;
+        border-bottom: 1px solid #e0e5ec;
+      }
+
+      .comparison-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .comparison-heading {
+        color: #2980b9;
+        font-size: 20px;
+        margin-bottom: 18px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+
+      /* Responsive */
+      @media (max-width: 480px) {
+        .back-btn {
+          display: none;
+        }
+
+        .icon-btn {
+          width: 28px;
+          height: 28px;
+          font-size: 12px;
+          border: 1px solid #9aa3af;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header {
+          padding: 8px 10px;
+        }
+
+        .header h1 {
+          font-size: 17px;
+        }
+
+        .back-btn {
+          padding: 10px 16px;
+          font-size: 13px;
+        }
+
+        .icon-btn {
+          width: 28px;
+          height: 28px;
+          font-size: 12px;
+        }
+
+        .card {
+          padding: 18px;
+        }
+
+        .card h2 {
+          font-size: 20px;
+        }
+
+        .btn-group {
+          flex-direction: column;
+        }
+
+        .calculate-btn,
+        .reset-btn {
+          width: 100%;
+          min-width: auto;
+        }
+
+        .calculate-btn {
+          font-size: 16px;
+          padding: 14px 30px;
+        }
+
+        .reset-btn {
+          padding: 14px 30px;
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .result-value {
+          font-size: 22px;
+        }
+
+        .charts-container {
+          grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+
+        .action-btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .comparison-table,
+        .comparison-table thead,
+        .comparison-table tbody,
+        .comparison-table th,
+        .comparison-table td,
+        .comparison-table tr {
+          display: block;
+        }
+
+        .comparison-table thead tr {
+          display: none;
+        }
+
+        .comparison-table tr {
+          margin-bottom: 15px;
+          border: 1px solid #d1d9e6;
+          border-radius: 8px;
+          padding: 10px;
+          background: #ffffff;
+        }
+
+        .comparison-table td {
+          text-align: right;
+          padding: 8px 10px;
+          position: relative;
+          padding-left: 50%;
+          border: none;
+        }
+
+        .comparison-table td:before {
+          content: attr(data-label);
+          position: absolute;
+          left: 10px;
+          font-weight: 600;
+          color: #555;
+        }
+      }
+
+      @media (min-width: 768px) {
+        .main-content {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .card.full-width {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .header h1 {
+          font-size: 30px;
+        }
+
+        .card {
+          padding: 25px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Top Bar -->
+      <div class="header">
+        <button class="back-btn" onclick="window.location.href='../../home.html'">
+          <span>←</span> Go Back
+        </button>
+        <div class="header-center">
+          <h1>Inflation Rate Calculator</h1>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" title="Share">📤</button>
+          <button class="icon-btn" title="Download PDF">📄</button>
+          <button class="icon-btn" title="Toggle Theme">🌓</button>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <!-- Input Section -->
+        <div class="card">
+          <h2>Inflation Details</h2>
+
+          <div class="input-group">
+            <label for="currentAmount">Current Amount/Price</label>
+            <input
+              type="number"
+              id="currentAmount"
+              value="100000"
+              min="1"
+              step="1000"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="inflationRate">Expected Inflation Rate (% per annum)</label>
+            <input
+              type="number"
+              id="inflationRate"
+              value="6"
+              min="0"
+              max="30"
+              step="0.5"
+            />
+          </div>
+
+          <div class="input-group">
+            <label>Time Period</label>
+            <div class="toggle-group">
+              <button class="toggle-btn active" id="periodYears" onclick="setPeriodType('years')" tabindex="0" role="button" aria-pressed="true">
+                Years
+              </button>
+              <button class="toggle-btn" id="periodMonths" onclick="setPeriodType('months')" tabindex="0" role="button" aria-pressed="false">
+                Months
+              </button>
+            </div>
+            <input
+              type="number"
+              id="timePeriod"
+              value="10"
+              min="1"
+              style="margin-top: 15px"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="currency">Currency</label>
+            <select id="currency">
+              <option value="₹">INR (₹)</option>
+              <option value="$">USD ($)</option>
+              <option value="€">EUR (€)</option>
+              <option value="£">GBP (£)</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Calculation Mode</label>
+            <div class="toggle-group">
+              <button
+                class="toggle-btn active"
+                id="modeFuture"
+                onclick="setMode('future')"
+              >
+                Future Value
+              </button>
+              <button
+                class="toggle-btn"
+                id="modePast"
+                onclick="setMode('past')"
+              >
+                Past Value
+              </button>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button class="calculate-btn" onclick="calculateInflation()">
+              Calculate Impact
+            </button>
+            <button class="reset-btn" onclick="resetForm()">Reset</button>
+          </div>
+        </div>
+
+        <!-- Quick Info -->
+        <div class="card">
+          <h2>Quick Tips</h2>
+          <div style="color: #555; line-height: 1.8">
+            <p style="margin-bottom: 15px">
+              📊 <strong>Inflation</strong> reduces the purchasing power of money over time.
+            </p>
+            <p style="margin-bottom: 15px">
+              💡 India's average inflation rate has been around 5-7% historically.
+            </p>
+            <p style="margin-bottom: 15px">
+              📈 Your investments should ideally beat inflation to grow real wealth.
+            </p>
+            <p style="margin-bottom: 15px">
+              🎯 Plan for higher inflation when calculating long-term financial goals.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="cards full-width hidden" id="resultsSection">
+        <h2>Inflation Impact Summary</h2>
+
+        <div class="results-grid">
+          <div class="result-item">
+            <div class="result-label">Current Value</div>
+            <div class="result-value" id="currentValue">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Future/Past Value</div>
+            <div class="result-value" id="adjustedValue">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Total Impact</div>
+            <div class="result-value" id="totalImpact">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Purchasing Power Loss</div>
+            <div class="result-value" id="powerLoss" style="font-size: 18px">
+              -
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-container">
+          <div class="chart-wrapper">
+            <h3>Value Comparison</h3>
+            <canvas id="barChart"></canvas>
+          </div>
+          <div class="chart-wrapper">
+            <h3>Value Over Time</h3>
+            <canvas id="lineChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="action-btn">📄 Download PDF</button>
+          <button class="action-btn" onclick="toggleComparison()">
+            📊 Show Detailed Breakdown
+          </button>
+          <button class="action-btn" onclick="toggleSteps()">
+            🧮 Show Calculation Steps
+          </button>
+        </div>
+
+        <!-- Comparison Section -->
+        <div class="comparison-section hidden" id="comparisonSection">
+          <h3 class="comparison-heading">Year-wise Inflation Impact</h3>
+          <div id="comparisonTable"></div>
+        </div>
+
+        <!-- Calculation Steps -->
+        <div class="calculation-steps hidden" id="calculationSteps">
+          <h3>Step-by-Step Calculation</h3>
+          <div class="formula">
+            <strong>Future Value Formula:</strong><br />
+            FV = PV × (1 + r)^n<br /><br />
+            <strong>Past Value Formula:</strong><br />
+            PV = FV / (1 + r)^n<br /><br />
+            Where:<br />
+            PV = Present/Current Value<br />
+            FV = Future Value<br />
+            r = Inflation rate (Annual rate / 100)<br />
+            n = Number of years
+          </div>
+          <div
+            id="calculationExample"
+            style="margin-top: 15px; color: #555; line-height: 1.8"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="info-cards">
+        <div class="info-card">
+          <h3>How to Use the Inflation Calculator</h3>
+          <ul>
+            <li>Enter the current amount or price in the first field</li>
+            <li>Input the expected annual inflation rate (typically 5-7%)</li>
+            <li>Choose your time period in years or months</li>
+            <li>Select your preferred currency</li>
+            <li>Choose calculation mode: Future Value or Past Value</li>
+            <li>Click "Calculate Impact" to see the inflation effect</li>
+            <li>View detailed breakdown to understand year-wise changes</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h3>What is Inflation?</h3>
+          <p>
+            Inflation is the rate at which the general level of prices for goods and services rises, eroding purchasing power. As inflation increases, every rupee buys fewer goods and services.
+          </p>
+          <p style="margin-top: 15px">
+            <strong>Example:</strong> If you have ₹1,00,000 today and inflation is 6% annually, after 10 years you'll need ₹1,79,085 to maintain the same purchasing power!
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Why Track Inflation?</h3>
+          <ul>
+            <li>Plan retirement corpus accounting for rising costs</li>
+            <li>Understand real returns on your investments</li>
+            <li>Set realistic financial goals for the future</li>
+            <li>Make informed decisions about savings and spending</li>
+            <li>Protect wealth from erosion over time</li>
+            <li>Compare historical prices to current values</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+let periodType = 'years';
+let mode = 'future';
+let barChart, lineChart;
+
+// Toggle period type (years/months)
+function setPeriodType(type) {
+  periodType = type;
+  document.getElementById('periodYears').classList.toggle('active', type === 'years');
+  document.getElementById('periodMonths').classList.toggle('active', type === 'months');
+  document.getElementById('periodYears').setAttribute('aria-pressed', type === 'years');
+  document.getElementById('periodMonths').setAttribute('aria-pressed', type === 'months');
+}
+
+// Toggle calculation mode (future/past)
+function setMode(m) {
+  mode = m;
+  document.getElementById('modeFuture').classList.toggle('active', m === 'future');
+  document.getElementById('modePast').classList.toggle('active', m === 'past');
+}
+
+// Main calculation
+function calculateInflation() {
+  const PV = parseFloat(document.getElementById('currentAmount').value) || 0;
+  const r = parseFloat(document.getElementById('inflationRate').value) / 100;
+  let n = parseFloat(document.getElementById('timePeriod').value);
+  const currency = document.getElementById('currency').value;
+
+  // Convert months to years if needed
+  if (periodType === 'months') n = n / 12;
+
+  let FV = 0, totalImpact = 0, powerLoss = 0;
+  let yearlyValues = [];
+
+  if (mode === 'future') {
+    FV = PV * Math.pow(1 + r, n);
+    totalImpact = FV - PV;
+    powerLoss = FV - (PV * Math.pow(1, n)); // purchasing power loss = FV - PV
+    // Yearly breakdown
+    for (let year = 0; year <= Math.ceil(n); year++) {
+      yearlyValues.push(PV * Math.pow(1 + r, year));
+    }
+  } else {
+    FV = PV / Math.pow(1 + r, n);
+    totalImpact = PV - FV;
+    powerLoss = PV - FV;
+    for (let year = 0; year <= Math.ceil(n); year++) {
+      yearlyValues.push(PV / Math.pow(1 + r, year));
+    }
+  }
+
+  // Update results
+  document.getElementById('resultsSection').classList.remove('hidden');
+  document.getElementById('currentValue').textContent = currency + ' ' + formatNumber(PV);
+  document.getElementById('adjustedValue').textContent = currency + ' ' + formatNumber(FV);
+  document.getElementById('totalImpact').textContent = currency + ' ' + formatNumber(totalImpact);
+  document.getElementById('powerLoss').textContent = currency + ' ' + formatNumber(powerLoss);
+
+  // Draw charts
+  drawBarChart(PV, FV, currency);
+  drawLineChart(yearlyValues, currency);
+
+  // Fill calculation example
+  fillCalculationExample(PV, r, n, FV, currency);
+
+  // Fill comparison table
+  fillComparisonTable(PV, r, n, currency);
+}
+
+// Format numbers with commas
+function formatNumber(num) {
+  return num.toLocaleString(undefined, { maximumFractionDigits: 2 });
+}
+
+// Bar chart: Value Comparison
+function drawBarChart(PV, FV, currency) {
+  const ctx = document.getElementById('barChart').getContext('2d');
+  if (barChart) barChart.destroy();
+  barChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Current Value', mode === 'future' ? 'Future Value' : 'Past Value'],
+      datasets: [{
+        data: [PV, FV],
+        backgroundColor: ['#e74c3c', '#2980b9'],
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+}
+
+// Line chart: Value Over Time
+function drawLineChart(values, currency) {
+  const ctx = document.getElementById('lineChart').getContext('2d');
+  if (lineChart) lineChart.destroy();
+  lineChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: values.map((_, i) => periodType === 'years' ? 'Year ' + i : 'Month ' + (i * 12)),
+      datasets: [{
+        label: mode === 'future' ? 'Future Value' : 'Past Value',
+        data: values,
+        borderColor: '#e74c3c',
+        backgroundColor: 'rgba(231,76,60,0.1)',
+        fill: true,
+        pointRadius: 3,
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+}
+
+// Calculation example
+function fillCalculationExample(PV, r, n, FV, currency) {
+  let example = '';
+  if (mode === 'future') {
+    example = `FV = ${currency} ${formatNumber(PV)} × (1 + ${r.toFixed(4)})^${n}<br>
+    FV = ${currency} ${formatNumber(FV)}`;
+  } else {
+    example = `PV = ${currency} ${formatNumber(PV)} / (1 + ${r.toFixed(4)})^${n}<br>
+    PV = ${currency} ${formatNumber(FV)}`;
+  }
+  document.getElementById('calculationExample').innerHTML = example;
+}
+
+// Year-wise breakdown table
+function fillComparisonTable(PV, r, n, currency) {
+  let html = `<table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Year</th>
+        <th>${mode === 'future' ? 'Future Value' : 'Past Value'}</th>
+        <th>Impact</th>
+      </tr>
+    </thead>
+    <tbody>`;
+  for (let year = 0; year <= Math.ceil(n); year++) {
+    let value = mode === 'future'
+      ? PV * Math.pow(1 + r, year)
+      : PV / Math.pow(1 + r, year);
+    let impact = mode === 'future'
+      ? value - PV
+      : PV - value;
+    html += `<tr>
+      <td>${year}</td>
+      <td>${currency} ${formatNumber(value)}</td>
+      <td>${currency} ${formatNumber(impact)}</td>
+    </tr>`;
+  }
+  html += '</tbody></table>';
+  document.getElementById('comparisonTable').innerHTML = html;
+}
+
+// Toggle comparison section
+function toggleComparison() {
+  document.getElementById('comparisonSection').classList.toggle('hidden');
+}
+
+// Toggle calculation steps section
+function toggleSteps() {
+  document.getElementById('calculationSteps').classList.toggle('hidden');
+}
+
+// Reset form
+function resetForm() {
+  document.getElementById('currentAmount').value = 100000;
+  document.getElementById('inflationRate').value = 6;
+  document.getElementById('timePeriod').value = 10;
+  document.getElementById('currency').value = '₹';
+  setPeriodType('years');
+  setMode('future');
+  document.getElementById('resultsSection').classList.add('hidden');
+  document.getElementById('comparisonSection').classList.add('hidden');
+  document.getElementById('calculationSteps').classList.add('hidden');
+  if (barChart) barChart.destroy();
+  if (lineChart) lineChart.destroy();
+}
+
+// Initialize default type
+setPeriodType('years');
+setMode('future');
+</script>
+  </body>
+</html>

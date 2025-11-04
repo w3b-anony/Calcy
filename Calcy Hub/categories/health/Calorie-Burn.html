@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Calorie Burn Calculator 🔥 - Track Your Workout & Daily Activity Calories
+    </title>
+    <meta
+      name="description"
+      content="Free Calorie Burn Calculator with 100+ activities. Calculate calories burned during exercise, daily activities, and sports. Track BMR, TDEE, and create personalized workout plans."
+    />
+    <meta
+      name="keywords"
+      content="calorie calculator, calories burned, workout calculator, exercise calories, BMR calculator, TDEE calculator, weight loss calculator"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-bg: #e0e5ec;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #e0e5ec;
+        color: #333;
+        padding: 10px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Top Bar */
+      .header {
+        background: var(--primary-bg);
+        padding: 10px 12px;
+        border: 1px solid #9aa3af;
+        border-radius: 10px;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: nowrap;
+      }
+
+      .back-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        padding: 8px 12px;
+        border-radius: 10px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        color: #555;
+        font-size: 12px;
+        transition: all 0.3s;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .back-btn:hover {
+        box-shadow: inset 3px 3px 7px #a3b1c6, inset -3px -3px 7px #ffffff;
+      }
+
+      .back-btn:active {
+        box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+      }
+
+      .header-center {
+        flex: 1;
+        text-align: center;
+        min-width: 0;
+      }
+
+      .header-center h1 {
+        font-size: 16px;
+        margin-bottom: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+
+      .icon-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .icon-btn:active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      /* Main Content */
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      /* Card Style */
+      .card {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 15px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .card h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+        color: #2c502e;
+      }
+
+      /* Input Groups */
+      .input-group {
+        margin-bottom: 12px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+        font-size: 13px;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      input[type="number"],
+      select {
+        width: 100%;
+        padding: 7px 15px;
+        border: none;
+        border-radius: 10px;
+        border: 1px solid #9aa3af;
+        background: var(--primary-bg);
+        box-shadow: inset 0px 0px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        font-size: 14px;
+        color: #333;
+        transition: all 0.3s;
+      }
+
+      input[type="number"]:focus,
+      select:focus {
+        outline: none;
+        box-shadow: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+      }
+
+      .unit-toggle {
+        display: inline-block;
+        margin-left: 10px;
+        font-size: 11px;
+        color: #777;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      /* Toggle Switch */
+      .toggle-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .toggle-btn {
+        flex: 1;
+        min-width: 80px;
+        padding: 7px 15px;
+        border: none;
+        border-radius: 10px;
+        border: 1px solid #9aa3afdf;
+        background: var(--primary-bg);
+        box-shadow: 0px 0px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        cursor: pointer;
+        font-size: 13px;
+        color: #555;
+        transition: all 0.3s;
+      }
+
+      .toggle-btn.active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        color: #e67e22;
+        font-weight: 600;
+      }
+
+      /* Buttons */
+      .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .calculate-btn {
+        flex: 2;
+        min-width: 150px;
+        padding: 14px 30px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(145deg, #e67e22, #d35400);
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .calculate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 8px 8px 16px #a3b1c6, -8px -8px 16px #ffffff;
+      }
+
+      .calculate-btn:active {
+        transform: translateY(0);
+        box-shadow: inset 2px 2px 8px #d35400, inset -4px -4px 8px #f39c12;
+      }
+
+      .reset-btn {
+        flex: 1;
+        min-width: 100px;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 12px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .reset-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+
+      .reset-btn:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+
+      /* Results */
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .result-item {
+        background: var(--primary-bg);
+        padding: 10px;
+        border-radius: 12px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        text-align: center;
+      }
+
+      .result-label {
+        font-size: 9px;
+        color: #777;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .result-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2c3e50;
+        word-break: break-word;
+      }
+
+      /* Charts */
+      .charts-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .chart-wrapper {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 9px 9px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .chart-wrapper h3 {
+        margin-bottom: 15px;
+        color: #2c3e50;
+        font-size: 16px;
+      }
+
+      .chart-wrapper canvas {
+        max-height: 150px;
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .action-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 140px;
+        justify-content: center;
+      }
+
+      .action-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+
+      /* Info Cards */
+      .info-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .info-card {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid #9aa3af;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .info-card h3 {
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 16px;
+      }
+
+      .info-card p,
+      .info-card ul {
+        color: #555;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+
+      .info-card ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .info-card li {
+        padding-left: 20px;
+        position: relative;
+        margin-bottom: 8px;
+      }
+
+      .info-card li:before {
+        content: "•";
+        position: absolute;
+        left: 8px;
+        color: #e67e22;
+        font-weight: bold;
+      }
+
+      /* Hidden Sections */
+      .hidden {
+        display: none;
+      }
+
+      .comparison-section,
+      .calculation-steps {
+        margin-top: 20px;
+        padding: 15px;
+        background: var(--primary-bg);
+        border-radius: 12px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      .calculation-steps h3 {
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 16px;
+      }
+
+      .formula {
+        background: #f5f7fa;
+        padding: 12px;
+        border-radius: 8px;
+        margin: 12px 0;
+        font-family: "Courier New", monospace;
+        overflow-x: auto;
+        font-size: 12px;
+      }
+
+      .cards {
+        background: var(--primary-bg);
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 15px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .cards h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+        color: #2c502e;
+      }
+
+      .activity-search {
+        position: relative;
+        margin-bottom: 10px;
+      }
+
+      .activity-search input {
+        width: 100%;
+        padding: 10px 40px 10px 15px;
+      }
+
+      .activity-search::after {
+        content: "🔍";
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      /* Mobile specific adjustments */
+      @media (max-width: 480px) {
+        body {
+          padding: 8px;
+        }
+
+        .header {
+          padding: 8px 10px;
+          gap: 6px;
+        }
+
+        .header-center h1 {
+          font-size: 17px;
+          margin-bottom: 3px;
+        }
+
+        .back-btn {
+          display: none;
+        }
+
+        .icon-btn {
+          width: 28px;
+          height: 28px;
+          font-size: 12px;
+        }
+
+        .card {
+          padding: 12px;
+        }
+
+        .card h2 {
+          font-size: 16px;
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .result-value {
+          font-size: 14px;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+
+        .action-btn {
+          width: 100%;
+          min-width: auto;
+        }
+      }
+
+      /* Tablet and larger screens */
+      @media (min-width: 768px) {
+        body {
+          padding: 20px;
+        }
+
+        .header {
+          padding: 12px 15px;
+        }
+
+        .back-btn {
+          padding: 10px 16px;
+          font-size: 13px;
+        }
+
+        .header-center h1 {
+          font-size: 20px;
+        }
+
+        .icon-btn {
+          width: 36px;
+          height: 36px;
+          font-size: 16px;
+        }
+
+        .main-content {
+          grid-template-columns: 1fr 1fr;
+          gap: 25px;
+        }
+
+        .card {
+          padding: 20px;
+        }
+
+        .card h2 {
+          font-size: 22px;
+        }
+
+        .cards.full-width {
+          grid-column: 1 / -1;
+        }
+
+        .results-grid {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 20px;
+        }
+
+        .result-value {
+          font-size: 24px;
+        }
+
+        .charts-container {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 25px;
+        }
+
+        .chart-wrapper canvas {
+          max-height: 300px;
+        }
+
+        .info-cards {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 25px;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .header-center h1 {
+          font-size: 24px;
+        }
+
+        .result-value {
+          font-size: 26px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Top Bar -->
+      <div class="header">
+        <button class="back-btn" onclick="window.history.back()">
+          <span>←</span> Go Back
+        </button>
+        <div class="header-center">
+          <h1>Calorie Burn Calculator</h1>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" onclick="shareCalculator()" title="Share">
+            📤
+          </button>
+          <button class="icon-btn" onclick="downloadPDF()" title="Download PDF">
+            📄
+          </button>
+          <button
+            class="icon-btn"
+            onclick="toggleDarkMode()"
+            title="Toggle Theme"
+          >
+            🌓
+          </button>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <!-- Input Section -->
+        <div class="card">
+          <h2>Personal Details</h2>
+
+          <div class="input-group">
+            <label for="weight">
+              Weight
+              <span
+                class="unit-toggle"
+                id="weightUnit"
+                onclick="toggleWeightUnit()"
+                >kg</span
+              >
+            </label>
+            <input
+              type="number"
+              id="weight"
+              value="70"
+              min="20"
+              max="300"
+              step="0.1"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="height">
+              Height
+              <span
+                class="unit-toggle"
+                id="heightUnit"
+                onclick="toggleHeightUnit()"
+                >cm</span
+              >
+            </label>
+            <input
+              type="number"
+              id="height"
+              value="170"
+              min="50"
+              max="250"
+              step="0.1"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="age">Age (years)</label>
+            <input type="number" id="age" value="30" min="10" max="100" />
+          </div>
+
+          <div class="input-group">
+            <label>Gender</label>
+            <div class="toggle-group">
+              <button
+                class="toggle-btn active"
+                id="genderMale"
+                onclick="setGender('male')"
+              >
+                Male
+              </button>
+              <button
+                class="toggle-btn"
+                id="genderFemale"
+                onclick="setGender('female')"
+              >
+                Female
+              </button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="activityLevel">Activity Level</label>
+            <select id="activityLevel">
+              <option value="1.2">Sedentary (little/no exercise)</option>
+              <option value="1.375">Light (1-3 days/week)</option>
+              <option value="1.55" selected>Moderate (3-5 days/week)</option>
+              <option value="1.725">Very Active (6-7 days/week)</option>
+              <option value="1.9">Extra Active (physical job)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quick Info -->
+        <div class="card">
+          <h2>Quick Tips 🔥</h2>
+          <div style="color: #555; line-height: 1.8">
+            <p style="margin-bottom: 15px">
+              💪 <strong>BMR</strong> - Calories your body burns at rest
+            </p>
+            <p style="margin-bottom: 15px">
+              🏃 <strong>TDEE</strong> - Total Daily Energy Expenditure
+              including activities
+            </p>
+            <p style="margin-bottom: 15px">
+              🔥 Different activities burn different amounts of calories
+            </p>
+            <p style="margin-bottom: 15px">
+              ⚡ Higher intensity = More calories burned
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity Selection -->
+      <div class="cards full-width">
+        <h2>Select Activity</h2>
+
+        <div class="activity-search">
+          <input
+            type="text"
+            id="activitySearch"
+            placeholder="Search activities..."
+            oninput="filterActivities()"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="activityType">Activity Category</label>
+          <select id="activityType" onchange="updateActivityList()">
+            <option value="cardio">Cardio & Running</option>
+            <option value="sports">Sports</option>
+            <option value="strength">Strength Training</option>
+            <option value="daily">Daily Activities</option>
+            <option value="water">Water Sports</option>
+            <option value="cycling">Cycling</option>
+            <option value="dance">Dance & Fitness</option>
+            <option value="outdoor">Outdoor Activities</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="activity">Specific Activity</label>
+          <select id="activity"></select>
+        </div>
+
+        <div class="input-group">
+          <label for="duration">Duration (minutes)</label>
+          <input type="number" id="duration" value="30" min="1" max="600" />
+        </div>
+
+        <div class="btn-group">
+          <button class="calculate-btn" onclick="calculateCalories()">
+            Calculate Calories
+          </button>
+          <button class="reset-btn" onclick="resetForm()">Reset</button>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="cards full-width hidden" id="resultsSection">
+        <h2>Your Results</h2>
+
+        <div class="results-grid">
+          <div class="result-item">
+            <div class="result-label">Calories Burned</div>
+            <div class="result-value" id="caloriesBurned">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">BMR</div>
+            <div class="result-value" id="bmrValue">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">TDEE</div>
+            <div class="result-value" id="tdeeValue">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Weekly Burn</div>
+            <div class="result-value" id="weeklyBurn">-</div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-container">
+          <div class="chart-wrapper">
+            <h3>Calorie Distribution</h3>
+            <canvas id="pieChart"></canvas>
+          </div>
+          <div class="chart-wrapper">
+            <h3>Weekly Projection</h3>
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="action-btn" onclick="downloadPDF()">
+            📄 Download Report
+          </button>
+          <button class="action-btn" onclick="toggleWeightGoal()">
+            🎯 Weight Loss Goal
+          </button>
+          <button class="action-btn" onclick="toggleSteps()">
+            📊 View Details
+          </button>
+        </div>
+
+        <!-- Weight Goal Section -->
+        <div class="comparison-section hidden" id="weightGoalSection">
+          <h3>Weight Loss/Gain Goal Calculator</h3>
+          <div class="input-group">
+            <label for="targetWeight">Target Weight (kg)</label>
+            <input
+              type="number"
+              id="targetWeight"
+              value="65"
+              min="30"
+              max="200"
+              step="0.1"
+            />
+          </div>
+          <div class="input-group">
+            <label for="targetWeeks">Timeframe (weeks)</label>
+            <input
+              type="number"
+              id="targetWeeks"
+              value="12"
+              min="1"
+              max="104"
+            />
+          </div>
+          <button
+            class="action-btn"
+            onclick="calculateWeightGoal()"
+            style="margin-top: 15px"
+          >
+            Calculate Plan
+          </button>
+          <div
+            id="weightGoalResults"
+            style="margin-top: 20px; color: #555"
+          ></div>
+        </div>
+
+        <!-- Calculation Steps -->
+        <div class="calculation-steps hidden" id="calculationSteps">
+          <h3>Detailed Breakdown</h3>
+          <div class="formula">
+            <strong>BMR Calculation (Mifflin-St Jeor):</strong><br />
+            Men: BMR = (10 × weight) + (6.25 × height) - (5 × age) + 5<br />
+            Women: BMR = (10 × weight) + (6.25 × height) - (5 × age) - 161<br /><br />
+            <strong>TDEE = BMR × Activity Level</strong><br /><br />
+            <strong>Calories Burned = MET × weight × duration / 60</strong>
+          </div>
+          <div
+            id="calculationExample"
+            style="margin-top: 15px; color: #555; line-height: 1.8"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="info-cards">
+        <div class="info-card">
+          <h3>How to Use This Calculator</h3>
+          <ul>
+            <li>Enter your accurate weight, height, age, and gender</li>
+            <li>Select your general activity level</li>
+            <li>Choose the specific activity you performed</li>
+            <li>Enter the duration of your activity</li>
+            <li>Click "Calculate Calories" to see detailed results</li>
+            <li>Use the weight goal tool to plan your fitness journey</li>
+            <li>Download your results as a PDF for tracking</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h3>Understanding Your Results</h3>
+          <p>
+            <strong>BMR (Basal Metabolic Rate):</strong> The number of calories
+            your body needs at complete rest to maintain vital functions like
+            breathing and circulation.
+          </p>
+          <p style="margin-top: 10px">
+            <strong>TDEE (Total Daily Energy Expenditure):</strong> Your total
+            calorie burn including your activity level. This is the amount you
+            need to maintain your current weight.
+          </p>
+          <p style="margin-top: 10px">
+            <strong>Calories Burned:</strong> Additional calories burned during
+            your specific activity session.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Weight Management Tips</h3>
+          <ul>
+            <li>To lose 1 kg, you need a deficit of ~7,700 calories</li>
+            <li>Safe weight loss: 0.5-1 kg per week</li>
+            <li>Combine cardio and strength training for best results</li>
+            <li>
+              Stay hydrated - drink water before, during, and after exercise
+            </li>
+            <li>Track your food intake along with exercise</li>
+            <li>Get adequate sleep for recovery and metabolism</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Calorie Burn Calculator JS
+      let gender = "male";
+      let weightUnit = "kg";
+      let heightUnit = "cm";
+      let pieChart, barChart;
+
+      // Activity database with MET values
+      const activities = {
+        cardio: [
+          { name: "Walking (3.5 mph)", met: 3.8 },
+          { name: "Walking (4.5 mph)", met: 5.0 },
+          { name: "Running (5 mph)", met: 8.3 },
+          { name: "Running (6 mph)", met: 9.8 },
+          { name: "Running (7 mph)", met: 11.0 },
+          { name: "Running (8 mph)", met: 11.8 },
+          { name: "Jogging", met: 7.0 },
+          { name: "Stair climbing", met: 8.8 },
+          { name: "Jump rope", met: 12.3 },
+          { name: "Elliptical trainer", met: 5.0 },
+          { name: "Treadmill", met: 7.0 },
+        ],
+        sports: [
+          { name: "Basketball", met: 6.5 },
+          { name: "Football", met: 8.0 },
+          { name: "Tennis", met: 7.3 },
+          { name: "Badminton", met: 5.5 },
+          { name: "Cricket", met: 4.8 },
+          { name: "Golf", met: 4.8 },
+          { name: "Volleyball", met: 4.0 },
+          { name: "Table Tennis", met: 4.0 },
+          { name: "Boxing", met: 12.8 },
+          { name: "Martial Arts", met: 10.3 },
+          { name: "Soccer", met: 7.0 },
+          { name: "Hockey", met: 8.0 },
+        ],
+        strength: [
+          { name: "Weight lifting (moderate)", met: 5.0 },
+          { name: "Weight lifting (vigorous)", met: 6.0 },
+          { name: "Bodyweight exercises", met: 3.8 },
+          { name: "Push-ups", met: 3.8 },
+          { name: "Pull-ups", met: 8.0 },
+          { name: "Squats", met: 5.0 },
+          { name: "Deadlifts", met: 6.0 },
+          { name: "Bench press", met: 5.0 },
+          { name: "CrossFit", met: 5.6 },
+          { name: "Circuit training", met: 8.0 },
+        ],
+        daily: [
+          { name: "Cleaning house", met: 3.5 },
+          { name: "Cooking", met: 2.5 },
+          { name: "Gardening", met: 4.0 },
+          { name: "Mowing lawn", met: 5.5 },
+          { name: "Shopping", met: 2.3 },
+          { name: "Playing with kids", met: 5.8 },
+          { name: "Climbing stairs", met: 8.0 },
+          { name: "Vacuuming", met: 3.5 },
+          { name: "Washing car", met: 3.0 },
+          { name: "Moving furniture", met: 6.0 },
+        ],
+        water: [
+          { name: "Swimming (leisure)", met: 6.0 },
+          { name: "Swimming (laps, vigorous)", met: 9.8 },
+          { name: "Water aerobics", met: 5.5 },
+          { name: "Kayaking", met: 5.0 },
+          { name: "Surfing", met: 3.0 },
+          { name: "Water polo", met: 10.0 },
+          { name: "Diving", met: 3.0 },
+          { name: "Snorkeling", met: 5.0 },
+        ],
+        cycling: [
+          { name: "Cycling (leisure, <10 mph)", met: 4.0 },
+          { name: "Cycling (moderate, 12-14 mph)", met: 8.0 },
+          { name: "Cycling (vigorous, 14-16 mph)", met: 10.0 },
+          { name: "Cycling (racing, 16-19 mph)", met: 12.0 },
+          { name: "Mountain biking", met: 8.5 },
+          { name: "Stationary bike (moderate)", met: 6.8 },
+          { name: "Stationary bike (vigorous)", met: 8.8 },
+          { name: "Spin class", met: 8.5 },
+        ],
+        dance: [
+          { name: "Aerobics (low impact)", met: 5.0 },
+          { name: "Aerobics (high impact)", met: 7.3 },
+          { name: "Zumba", met: 6.5 },
+          { name: "Ballet", met: 4.8 },
+          { name: "Ballroom dancing", met: 3.0 },
+          { name: "Hip hop dancing", met: 5.0 },
+          { name: "Dance Dance Revolution", met: 7.3 },
+          { name: "Yoga", met: 2.5 },
+          { name: "Pilates", met: 3.0 },
+        ],
+        outdoor: [
+          { name: "Hiking", met: 6.0 },
+          { name: "Rock climbing", met: 8.0 },
+          { name: "Skiing (downhill)", met: 5.3 },
+          { name: "Skiing (cross-country)", met: 7.0 },
+          { name: "Snowboarding", met: 5.3 },
+          { name: "Ice skating", met: 5.5 },
+          { name: "Roller skating", met: 7.0 },
+          { name: "Skateboarding", met: 5.0 },
+        ],
+      };
+
+      function setGender(g) {
+        gender = g;
+        document
+          .getElementById("genderMale")
+          .classList.toggle("active", g === "male");
+        document
+          .getElementById("genderFemale")
+          .classList.toggle("active", g === "female");
+      }
+
+      function toggleWeightUnit() {
+        const input = document.getElementById("weight");
+        const unitSpan = document.getElementById("weightUnit");
+
+        if (weightUnit === "kg") {
+          // Convert kg to lbs
+          weightUnit = "lbs";
+          input.value = (parseFloat(input.value) * 2.20462).toFixed(1);
+          unitSpan.textContent = "lbs";
+        } else {
+          // Convert lbs to kg
+          weightUnit = "kg";
+          input.value = (parseFloat(input.value) / 2.20462).toFixed(1);
+          unitSpan.textContent = "kg";
+        }
+      }
+
+      function toggleHeightUnit() {
+        const input = document.getElementById("height");
+        const unitSpan = document.getElementById("heightUnit");
+
+        if (heightUnit === "cm") {
+          // Convert cm to inches
+          heightUnit = "in";
+          input.value = (parseFloat(input.value) / 2.54).toFixed(1);
+          unitSpan.textContent = "in";
+        } else {
+          // Convert inches to cm
+          heightUnit = "cm";
+          input.value = (parseFloat(input.value) * 2.54).toFixed(1);
+          unitSpan.textContent = "cm";
+        }
+      }
+
+      function updateActivityList() {
+        const category = document.getElementById("activityType").value;
+        const activitySelect = document.getElementById("activity");
+
+        activitySelect.innerHTML = "";
+
+        activities[category].forEach((activity, index) => {
+          const option = document.createElement("option");
+          option.value = index;
+          option.textContent = activity.name;
+          activitySelect.appendChild(option);
+        });
+      }
+
+      function filterActivities() {
+        const searchTerm = document
+          .getElementById("activitySearch")
+          .value.toLowerCase();
+
+        if (searchTerm === "") {
+          updateActivityList();
+          return;
+        }
+
+        const activitySelect = document.getElementById("activity");
+        activitySelect.innerHTML = "";
+
+        let found = false;
+
+        Object.keys(activities).forEach((category) => {
+          activities[category].forEach((activity, index) => {
+            if (activity.name.toLowerCase().includes(searchTerm)) {
+              const option = document.createElement("option");
+              option.value = `${category}-${index}`;
+              option.textContent = `${activity.name} (${category})`;
+              activitySelect.appendChild(option);
+              found = true;
+            }
+          });
+        });
+
+        if (!found) {
+          const option = document.createElement("option");
+          option.textContent = "No activities found";
+          activitySelect.appendChild(option);
+        }
+      }
+
+      function calculateBMR(weight, height, age, gender) {
+        // Convert to kg and cm if needed
+        const weightKg = weightUnit === "kg" ? weight : weight / 2.20462;
+        const heightCm = heightUnit === "cm" ? height : height * 2.54;
+
+        // Mifflin-St Jeor Equation
+        if (gender === "male") {
+          return 10 * weightKg + 6.25 * heightCm - 5 * age + 5;
+        } else {
+          return 10 * weightKg + 6.25 * heightCm - 5 * age - 161;
+        }
+      }
+
+      function calculateCalories() {
+        // Get values
+        const weight = parseFloat(document.getElementById("weight").value);
+        const height = parseFloat(document.getElementById("height").value);
+        const age = parseInt(document.getElementById("age").value);
+        const duration = parseInt(document.getElementById("duration").value);
+        const activityLevel = parseFloat(
+          document.getElementById("activityLevel").value
+        );
+
+        // Validate inputs
+        if (
+          !weight ||
+          weight <= 0 ||
+          !height ||
+          height <= 0 ||
+          !age ||
+          age <= 0 ||
+          !duration ||
+          duration <= 0
+        ) {
+          alert("Please enter valid details");
+          return;
+        }
+
+        // Get selected activity
+        const activitySelect = document.getElementById("activity");
+        const selectedValue = activitySelect.value;
+        let met;
+
+        if (selectedValue.includes("-")) {
+          const [category, index] = selectedValue.split("-");
+          met = activities[category][parseInt(index)].met;
+        } else {
+          const category = document.getElementById("activityType").value;
+          const index = parseInt(selectedValue);
+          met = activities[category][index].met;
+        }
+
+        // Convert weight to kg for calculation
+        const weightKg = weightUnit === "kg" ? weight : weight / 2.20462;
+
+        // Calculate calories burned: MET * weight(kg) * time(hours)
+        const caloriesBurned = met * weightKg * (duration / 60);
+
+        // Calculate BMR and TDEE
+        const bmr = calculateBMR(weight, height, age, gender);
+        const tdee = bmr * activityLevel;
+
+        // Calculate weekly projection
+        const weeklyBurn = caloriesBurned * 7;
+
+        // Update UI
+        document.getElementById("resultsSection").classList.remove("hidden");
+        document.getElementById("caloriesBurned").textContent =
+          Math.round(caloriesBurned) + " cal";
+        document.getElementById("bmrValue").textContent =
+          Math.round(bmr) + " cal";
+        document.getElementById("tdeeValue").textContent =
+          Math.round(tdee) + " cal";
+        document.getElementById("weeklyBurn").textContent =
+          Math.round(weeklyBurn) + " cal";
+
+        // Draw charts
+        drawCharts(caloriesBurned, bmr, tdee, duration);
+
+        // Show calculation steps
+        showCalculationSteps(
+          weight,
+          height,
+          age,
+          gender,
+          bmr,
+          tdee,
+          met,
+          duration,
+          caloriesBurned
+        );
+
+        // Scroll to results on mobile
+        if (window.innerWidth < 768) {
+          document
+            .getElementById("resultsSection")
+            .scrollIntoView({ behavior: "smooth" });
+        }
+      }
+
+      function drawCharts(caloriesBurned, bmr, tdee, duration) {
+        // Destroy existing charts
+        if (pieChart) pieChart.destroy();
+        if (barChart) barChart.destroy();
+
+        // Pie Chart - Calorie Distribution
+        const pieCtx = document.getElementById("pieChart");
+        if (pieCtx) {
+          pieChart = new Chart(pieCtx.getContext("2d"), {
+            type: "doughnut",
+            data: {
+              labels: ["Activity Calories", "BMR", "Other Daily Activities"],
+              datasets: [
+                {
+                  data: [caloriesBurned, bmr, tdee - bmr - caloriesBurned],
+                  backgroundColor: ["#e67e22", "#3498db", "#95a5a6"],
+                  borderColor: "#e0e5ec",
+                  borderWidth: 2,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    padding: 10,
+                    font: { size: 12 },
+                  },
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      return (
+                        context.label +
+                        ": " +
+                        Math.round(context.parsed) +
+                        " cal"
+                      );
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }
+
+        // Bar Chart - Weekly Projection
+        const barCtx = document.getElementById("barChart");
+        if (barCtx) {
+          const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+          const dailyCalories = Array(7).fill(Math.round(caloriesBurned));
+
+          barChart = new Chart(barCtx.getContext("2d"), {
+            type: "bar",
+            data: {
+              labels: days,
+              datasets: [
+                {
+                  label: "Calories Burned",
+                  data: dailyCalories,
+                  backgroundColor: "#e67e22",
+                  borderRadius: 5,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    callback: function (value) {
+                      return value + " cal";
+                    },
+                  },
+                },
+              },
+              plugins: {
+                legend: {
+                  display: false,
+                },
+              },
+            },
+          });
+        }
+      }
+
+      function showCalculationSteps(
+        weight,
+        height,
+        age,
+        gender,
+        bmr,
+        tdee,
+        met,
+        duration,
+        caloriesBurned
+      ) {
+        const calculationExample =
+          document.getElementById("calculationExample");
+        const weightKg = weightUnit === "kg" ? weight : weight / 2.20462;
+        const heightCm = heightUnit === "cm" ? height : height * 2.54;
+
+        if (calculationExample) {
+          calculationExample.innerHTML = `
+      <strong>Your Details:</strong><br>
+      Weight: ${weightKg.toFixed(1)} kg<br>
+      Height: ${heightCm.toFixed(1)} cm<br>
+      Age: ${age} years<br>
+      Gender: ${gender}<br><br>
+
+      <strong>BMR Calculation:</strong><br>
+      ${
+        gender === "male"
+          ? `BMR = (10 × ${weightKg.toFixed(1)}) + (6.25 × ${heightCm.toFixed(
+              1
+            )}) - (5 × ${age}) + 5`
+          : `BMR = (10 × ${weightKg.toFixed(1)}) + (6.25 × ${heightCm.toFixed(
+              1
+            )}) - (5 × ${age}) - 161`
+      }<br>
+      BMR = <b>${Math.round(bmr)} calories/day</b><br><br>
+
+      <strong>TDEE Calculation:</strong><br>
+      TDEE = BMR × Activity Level<br>
+      TDEE = <b>${Math.round(tdee)} calories/day</b><br><br>
+
+      <strong>Activity Calories:</strong><br>
+      Calories = MET × Weight(kg) × Duration(hours)<br>
+      Calories = ${met} × ${weightKg.toFixed(1)} × ${(duration / 60).toFixed(
+            2
+          )}<br>
+      Calories = <b>${Math.round(caloriesBurned)} calories</b>
+    `;
+        }
+      }
+
+      function calculateWeightGoal() {
+        const currentWeight = parseFloat(
+          document.getElementById("weight").value
+        );
+        const targetWeight = parseFloat(
+          document.getElementById("targetWeight").value
+        );
+        const weeks = parseInt(document.getElementById("targetWeeks").value);
+
+        if (!targetWeight || !weeks || weeks <= 0) {
+          alert("Please enter valid target weight and timeframe");
+          return;
+        }
+
+        const weightKg =
+          weightUnit === "kg" ? currentWeight : currentWeight / 2.20462;
+        const targetKg =
+          weightUnit === "kg" ? targetWeight : targetWeight / 2.20462;
+
+        const weightDiff = targetKg - weightKg;
+        const weightPerWeek = weightDiff / weeks;
+
+        // 1 kg = ~7700 calories
+        const caloriesPerWeek = weightPerWeek * 7700;
+        const caloriesPerDay = caloriesPerWeek / 7;
+
+        const bmr = calculateBMR(
+          currentWeight,
+          document.getElementById("height").value,
+          document.getElementById("age").value,
+          gender
+        );
+        const activityLevel = parseFloat(
+          document.getElementById("activityLevel").value
+        );
+        const tdee = bmr * activityLevel;
+
+        const recommendedIntake = tdee + caloriesPerDay;
+
+        const resultHTML = `
+    <div style="background: #f5f7fa; padding: 15px; border-radius: 10px; margin-top: 15px;">
+      <h4 style="color: #2c3e50; margin-bottom: 10px;">Your Weight ${
+        weightDiff > 0 ? "Gain" : "Loss"
+      } Plan</h4>
+      <p style="margin: 8px 0;"><strong>Current Weight:</strong> ${weightKg.toFixed(
+        1
+      )} kg</p>
+      <p style="margin: 8px 0;"><strong>Target Weight:</strong> ${targetKg.toFixed(
+        1
+      )} kg</p>
+      <p style="margin: 8px 0;"><strong>Weight to ${
+        weightDiff > 0 ? "Gain" : "Lose"
+      }:</strong> ${Math.abs(weightDiff).toFixed(1)} kg</p>
+      <p style="margin: 8px 0;"><strong>Weekly Goal:</strong> ${Math.abs(
+        weightPerWeek
+      ).toFixed(2)} kg/week</p>
+      <p style="margin: 8px 0;"><strong>Daily Calorie ${
+        weightDiff > 0 ? "Surplus" : "Deficit"
+      }:</strong> ${Math.abs(Math.round(caloriesPerDay))} cal</p>
+      <hr style="margin: 15px 0; border: none; border-top: 1px solid #ccc;">
+      <h4 style="color: #2c3e50; margin-bottom: 10px;">Recommendations</h4>
+      <p style="margin: 8px 0;"><strong>Your TDEE:</strong> ${Math.round(
+        tdee
+      )} cal/day</p>
+      <p style="margin: 8px 0;"><strong>Target Daily Intake:</strong> ${Math.round(
+        recommendedIntake
+      )} cal/day</p>
+      <div style="background: ${
+        Math.abs(weightPerWeek) > 1 ? "#e74c3c" : "#27ae60"
+      }; color: white; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;">
+        ${
+          Math.abs(weightPerWeek) > 1
+            ? "⚠️ This rate may be too aggressive. Safe rate: 0.5-1 kg per week"
+            : "✅ This is a healthy and sustainable rate"
+        }
+      </div>
+    </div>
+  `;
+
+        document.getElementById("weightGoalResults").innerHTML = resultHTML;
+      }
+
+      function resetForm() {
+        document.getElementById("weight").value = 70;
+        document.getElementById("height").value = 170;
+        document.getElementById("age").value = 30;
+        document.getElementById("duration").value = 30;
+        document.getElementById("activityLevel").value = "1.55";
+        document.getElementById("activitySearch").value = "";
+        setGender("male");
+        updateActivityList();
+
+        document.getElementById("resultsSection").classList.add("hidden");
+        document.getElementById("weightGoalSection").classList.add("hidden");
+        document.getElementById("calculationSteps").classList.add("hidden");
+
+        if (pieChart) {
+          pieChart.destroy();
+          pieChart = null;
+        }
+        if (barChart) {
+          barChart.destroy();
+          barChart = null;
+        }
+
+        if (window.innerWidth < 768) {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+
+      function toggleWeightGoal() {
+        const section = document.getElementById("weightGoalSection");
+        section.classList.toggle("hidden");
+
+        if (window.innerWidth < 768 && !section.classList.contains("hidden")) {
+          section.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+
+      function toggleSteps() {
+        const stepsSection = document.getElementById("calculationSteps");
+        stepsSection.classList.toggle("hidden");
+
+        if (
+          window.innerWidth < 768 &&
+          !stepsSection.classList.contains("hidden")
+        ) {
+          stepsSection.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+
+      function downloadPDF() {
+        if (
+          document.getElementById("resultsSection").classList.contains("hidden")
+        ) {
+          alert("Please calculate calories first");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(18);
+        doc.setTextColor(44, 62, 80);
+        doc.text("Calorie Burn Calculator Results", 105, 15, {
+          align: "center",
+        });
+
+        doc.setFontSize(12);
+        doc.setTextColor(85, 85, 85);
+
+        let yPos = 30;
+        doc.text(
+          "Calories Burned: " +
+            document.getElementById("caloriesBurned").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "BMR: " + document.getElementById("bmrValue").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "TDEE: " + document.getElementById("tdeeValue").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "Weekly Burn: " + document.getElementById("weeklyBurn").textContent,
+          20,
+          yPos
+        );
+
+        yPos += 20;
+        doc.setFontSize(14);
+        doc.setTextColor(44, 62, 80);
+        doc.text("Personal Details", 20, yPos);
+
+        yPos += 10;
+        doc.setFontSize(11);
+        doc.setTextColor(85, 85, 85);
+        doc.text(
+          "Weight: " +
+            document.getElementById("weight").value +
+            " " +
+            weightUnit,
+          20,
+          yPos
+        );
+        yPos += 8;
+        doc.text(
+          "Height: " +
+            document.getElementById("height").value +
+            " " +
+            heightUnit,
+          20,
+          yPos
+        );
+        yPos += 8;
+        doc.text(
+          "Age: " + document.getElementById("age").value + " years",
+          20,
+          yPos
+        );
+        yPos += 8;
+        doc.text("Gender: " + gender, 20, yPos);
+        yPos += 8;
+        doc.text(
+          "Duration: " + document.getElementById("duration").value + " minutes",
+          20,
+          yPos
+        );
+
+        doc.setFontSize(9);
+        doc.setTextColor(150, 150, 150);
+        doc.text("Generated by Calorie Burn Calculator", 105, 280, {
+          align: "center",
+        });
+        doc.text(new Date().toLocaleString(), 105, 285, { align: "center" });
+
+        doc.save("Calorie-Burn-Results.pdf");
+      }
+
+      function shareCalculator() {
+        if (navigator.share) {
+          navigator
+            .share({
+              title: "Calorie Burn Calculator",
+              text: "Calculate calories burned during exercise and activities!",
+              url: window.location.href,
+            })
+            .then(() => console.log("Shared successfully"))
+            .catch((error) => console.log("Error sharing:", error));
+        } else {
+          const url = window.location.href;
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(() => {
+              alert("Link copied to clipboard!");
+            });
+          } else {
+            alert("Sharing not supported on this browser. URL: " + url);
+          }
+        }
+      }
+
+      function toggleDarkMode() {
+        alert("Dark mode feature coming soon!");
+      }
+
+      // Responsive: recalculate charts on window resize
+      let resizeTimeout;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          if (
+            !document
+              .getElementById("resultsSection")
+              .classList.contains("hidden")
+          ) {
+            if (pieChart) pieChart.resize();
+            if (barChart) barChart.resize();
+          }
+        }, 250);
+      });
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        setGender("male");
+        updateActivityList();
+
+        const numberInputs = document.querySelectorAll('input[type="number"]');
+        numberInputs.forEach((input) => {
+          input.addEventListener("input", function () {
+            if (this.value < 0) this.value = 0;
+            if (
+              this.hasAttribute("max") &&
+              parseFloat(this.value) > parseFloat(this.getAttribute("max"))
+            ) {
+              this.value = this.getAttribute("max");
+            }
+          });
+        });
+
+        document.addEventListener("keypress", function (e) {
+          if (e.key === "Enter" && e.target.tagName !== "BUTTON") {
+            e.preventDefault();
+            calculateCalories();
+          }
+        });
+
+        if ("ontouchstart" in window) {
+          document.querySelectorAll("button, .toggle-btn").forEach((btn) => {
+            btn.addEventListener("touchstart", function () {
+              this.style.transform = "scale(0.98)";
+            });
+            btn.addEventListener("touchend", function () {
+              this.style.transform = "scale(1)";
+            });
+          });
+        }
+      });
+
+      // Prevent zoom on double tap
+      let lastTouchEnd = 0;
+      document.addEventListener(
+        "touchend",
+        function (event) {
+          const now = new Date().getTime();
+          if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+          }
+          lastTouchEnd = now;
+        },
+        false
+      );
+
+      // Viewport height fix for mobile
+      function setVH() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--vh", `${vh}px`);
+      }
+
+      setVH();
+      window.addEventListener("resize", setVH);
+      window.addEventListener("orientationchange", setVH);
+    </script>
+  </body>
+</html>

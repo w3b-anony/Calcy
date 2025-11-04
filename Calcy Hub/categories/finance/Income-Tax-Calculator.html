@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Income Tax Calculator 💰 - Calculate Your Tax Liability</title>
+    <meta
+      name="description"
+      content="Modern Neumorphic Income Tax Calculator with old vs new regime comparison, deductions, and detailed breakdown. Calculate tax liability instantly."
+    />
+    <meta
+      name="keywords"
+      content="Income Tax Calculator, Tax Calculator India, New Tax Regime, Old Tax Regime, Tax Deductions, Tax Planning, Section 80C, HRA Calculator"
+    />
+    <meta name="author" content="Calcy Hub" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-bg: #e0e5ec;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #e0e5ec;
+        color: #333;
+        padding: 8px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Top Bar */
+      .header {
+        background: var(--primary-bg);
+        padding: 8px 10px;
+        border: 1px solid #9aa3af;
+        border-radius: 10px;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 15px;
+        flex-wrap: nowrap;
+      }
+
+      .back-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        padding: 12px 20px;
+        border-radius: 12px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        color: #555;
+        font-size: 14px;
+        transition: all 0.3s;
+      }
+
+      .back-btn:hover {
+        box-shadow: inset 3px 3px 7px #a3b1c6, inset -3px -3px 7px #ffffff;
+      }
+
+      .back-btn:active {
+        box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+      }
+
+      .header-center {
+        flex: 1;
+        text-align: center;
+      }
+
+      .header-center h1 {
+        font-size: 28px;
+        margin-bottom: 3px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 6px;
+      }
+
+      .icon-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.3s;
+        border: none;
+      }
+
+      .icon-btn:active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      /* Main Content */
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      /* Card Style */
+      .card {
+        background: var(--primary-bg);
+        padding: 20px;
+        border-radius: 20px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .card h2 {
+        font-size: 22px;
+        margin-bottom: 15px;
+        color: #2c502e;
+      }
+
+      /* Input Groups */
+      .input-group {
+        margin-bottom: 15px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #555;
+        font-size: 14px;
+      }
+
+      input[type="number"],
+      select {
+        width: 100%;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 12px;
+        border: 1px solid #9aa3af;
+        background: var(--primary-bg);
+        box-shadow: inset 0px 0px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        font-size: 16px;
+        color: #333;
+        transition: all 0.3s;
+      }
+
+      input[type="number"]:focus,
+      select:focus {
+        outline: none;
+        box-shadow: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+      }
+
+      /* Toggle Switch */
+      .toggle-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .toggle-btn {
+        flex: 1;
+        min-width: 100px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 12px;
+        border: 1px solid #9aa3afdf;
+        background: var(--primary-bg);
+        box-shadow: 0px 0px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        cursor: pointer;
+        font-size: 14px;
+        color: #555;
+        transition: all 0.3s;
+      }
+
+      .toggle-btn.active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        color: #3498db;
+        font-weight: 600;
+        animation: pulse 3s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 1px 4px rgba(80, 99, 103, 0.3);
+        }
+        50% {
+          transform: scale(1.02);
+          box-shadow: 0 2px 6px rgba(93, 98, 99, 0.4);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 1px 4px rgba(85, 92, 93, 0.3);
+        }
+      }
+
+      /* Buttons */
+      .btn-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+      }
+
+      .calculate-btn {
+        flex: 2;
+        min-width: 200px;
+        padding: 15px 40px;
+        border: none;
+        border-radius: 15px;
+        background: linear-gradient(145deg, #27ae60, #229954);
+        color: var(--primary-bg);
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .calculate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 8px 8px 16px #a3b1c6, -8px -8px 16px #ffffff;
+      }
+
+      .calculate-btn:active {
+        transform: translateY(0);
+        box-shadow: inset 2px 2px 8px #1e8449, inset -4px -4px 8px #52be80;
+      }
+
+      .reset-btn {
+        flex: 1;
+        min-width: 120px;
+        padding: 18px 30px;
+        border: none;
+        border-radius: 15px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .reset-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+
+      .reset-btn:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+
+      /* Results */
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .result-item {
+        background: var(--primary-bg);
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        text-align: center;
+      }
+
+      .result-label {
+        font-size: 13px;
+        color: #777;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .result-value {
+        font-size: 26px;
+        font-weight: 700;
+        color: #2c3e50;
+      }
+
+      /* Comparison Cards */
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-top: 20px;
+      }
+
+      .regime-card {
+        background: var(--primary-bg);
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 9px 9px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .regime-card h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 20px;
+      }
+
+      .regime-card .tax-amount {
+        font-size: 32px;
+        font-weight: 700;
+        color: #e74c3c;
+        margin: 15px 0;
+      }
+
+      .regime-card .savings {
+        color: #27ae60;
+        font-weight: 600;
+        font-size: 16px;
+      }
+
+      .regime-card .better-badge {
+        background: linear-gradient(145deg, #27ae60, #229954);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 8px;
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+      }
+
+      .action-btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 10px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex: 1;
+        min-width: 140px;
+        justify-content: center;
+      }
+
+      .action-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+
+      /* Info Cards */
+      .info-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+      }
+
+      .info-card {
+        background: var(--primary-bg);
+        padding: 25px;
+        border-radius: 15px;
+        border: 1px solid #9aa3af;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .info-card h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+
+      .info-card p,
+      .info-card ul {
+        color: #555;
+        line-height: 1.8;
+        font-size: 14px;
+      }
+
+      .info-card ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .info-card li {
+        padding-left: 25px;
+        position: relative;
+        margin-bottom: 10px;
+      }
+
+      .info-card li:before {
+        content: "•";
+        position: absolute;
+        left: 10px;
+        color: #27ae60;
+        font-weight: bold;
+      }
+
+      /* Hidden Sections */
+      .hidden {
+        display: none;
+      }
+
+      .breakdown-section {
+        margin-top: 30px;
+        padding: 25px;
+        background: var(--primary-bg);
+        border-radius: 15px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      .breakdown-section h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+      }
+
+      .breakdown-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        background: #f5f7fa;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .breakdown-table th,
+      .breakdown-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #e0e5ec;
+      }
+
+      .breakdown-table th {
+        background: #e0e5ec;
+        color: #2c3e50;
+        font-weight: 600;
+      }
+
+      .breakdown-table tr:last-child td {
+        border-bottom: none;
+        font-weight: 600;
+        color: #e74c3c;
+      }
+
+      .cards {
+        background: var(--primary-bg);
+        padding: 20px;
+        margin-top: 30px;
+        border-radius: 20px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .cards h2 {
+        font-size: 22px;
+        margin-bottom: 15px;
+        color: #2c502e;
+      }
+
+      /* Deductions Section */
+      .deductions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      /* Responsive */
+      @media (max-width: 480px) {
+        .back-btn {
+          display: none;
+        }
+
+        .icon-btn {
+          width: 28px;
+          height: 28px;
+          font-size: 12px;
+          border: 1px solid #9aa3af;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 17px;
+        }
+
+        .card {
+          padding: 20px;
+        }
+
+        .btn-group {
+          flex-direction: column;
+        }
+
+        .calculate-btn,
+        .reset-btn {
+          width: 100%;
+        }
+
+        .results-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .comparison-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .deductions-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (min-width: 768px) {
+        .main-content {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .card.full-width {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .deductions-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Top Bar -->
+      <div class="header">
+        <button
+          class="back-btn"
+          onclick="window.location.href='../../home.html'"
+        >
+          <span>←</span> Go Back
+        </button>
+        <div class="header-center">
+          <h1>Income Tax Calculator</h1>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" title="Share">📤</button>
+          <button class="icon-btn" title="Download PDF">📄</button>
+          <button class="icon-btn" title="Toggle Theme">🌓</button>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <!-- Input Section -->
+        <div class="card">
+          <h2>Income Details</h2>
+
+          <div class="input-group">
+            <label for="financialYear">Financial Year</label>
+            <select id="financialYear">
+              <option value="2024-25">2024-25</option>
+              <option value="2023-24">2023-24</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="age">Age Group</label>
+            <select id="age">
+              <option value="below60">Below 60 years</option>
+              <option value="60to80">60 to 80 years (Senior Citizen)</option>
+              <option value="above80">
+                Above 80 years (Super Senior Citizen)
+              </option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="basicSalary">Annual Basic Salary (₹)</label>
+            <input
+              type="number"
+              id="basicSalary"
+              value="800000"
+              min="0"
+              step="10000"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="hra">HRA Received (₹)</label>
+            <input type="number" id="hra" value="200000" min="0" step="5000" />
+          </div>
+
+          <div class="input-group">
+            <label for="otherIncome">Other Income (₹)</label>
+            <input
+              type="number"
+              id="otherIncome"
+              value="0"
+              min="0"
+              step="5000"
+            />
+          </div>
+
+          <div class="input-group">
+            <label>Tax Regime</label>
+            <div class="toggle-group">
+              <button
+                class="toggle-btn active"
+                id="regimeOld"
+                onclick="setRegime('old')"
+              >
+                Old Regime
+              </button>
+              <button
+                class="toggle-btn"
+                id="regimeNew"
+                onclick="setRegime('new')"
+              >
+                New Regime
+              </button>
+              <button
+                class="toggle-btn"
+                id="regimeBoth"
+                onclick="setRegime('both')"
+              >
+                Compare Both
+              </button>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button class="calculate-btn" onclick="calculateTax()">
+              Calculate Tax
+            </button>
+            <button class="reset-btn" onclick="resetForm()">Reset</button>
+          </div>
+        </div>
+
+        <!-- Quick Info -->
+        <div class="card">
+          <h2>Quick Tax Tips</h2>
+          <div style="color: #555; line-height: 1.8">
+            <p style="margin-bottom: 15px">
+              💡 <strong>New Regime:</strong> Lower tax rates but no deductions
+              (except standard deduction).
+            </p>
+            <p style="margin-bottom: 15px">
+              📊 <strong>Old Regime:</strong> Higher rates but allows deductions
+              under 80C, 80D, HRA, etc.
+            </p>
+            <p style="margin-bottom: 15px">
+              🎯 <strong>Standard Deduction:</strong> ₹50,000 available in both
+              regimes (salaried individuals).
+            </p>
+            <p style="margin-bottom: 15px">
+              💰 <strong>Tax Planning:</strong> Choose regime based on your
+              deductions and investments.
+            </p>
+          </div>
+        </div>
+
+        <!-- Deductions Section (Old Regime Only) -->
+        <div class="card full-width" id="deductionsCard">
+          <h2>Deductions (Old Regime Only)</h2>
+          <div class="deductions-grid">
+            <div class="input-group">
+              <label for="section80C">Section 80C (₹)</label>
+              <input
+                type="number"
+                id="section80C"
+                value="150000"
+                min="0"
+                max="150000"
+                step="10000"
+              />
+              <small style="color: #777">Max: ₹1,50,000</small>
+            </div>
+            <div class="input-group">
+              <label for="section80D">Section 80D - Health Insurance (₹)</label>
+              <input
+                type="number"
+                id="section80D"
+                value="25000"
+                min="0"
+                max="100000"
+                step="5000"
+              />
+              <small style="color: #777"
+                >Max: ₹25,000 (₹50,000 for senior citizens)</small
+              >
+            </div>
+            <div class="input-group">
+              <label for="section80E">Section 80E - Education Loan (₹)</label>
+              <input
+                type="number"
+                id="section80E"
+                value="0"
+                min="0"
+                step="5000"
+              />
+              <small style="color: #777">No upper limit</small>
+            </div>
+            <div class="input-group">
+              <label for="section80G">Section 80G - Donations (₹)</label>
+              <input
+                type="number"
+                id="section80G"
+                value="0"
+                min="0"
+                step="5000"
+              />
+              <small style="color: #777">50-100% deduction</small>
+            </div>
+            <div class="input-group">
+              <label for="homeLoanInterest">Home Loan Interest (₹)</label>
+              <input
+                type="number"
+                id="homeLoanInterest"
+                value="0"
+                min="0"
+                max="200000"
+                step="10000"
+              />
+              <small style="color: #777">Max: ₹2,00,000</small>
+            </div>
+            <div class="input-group">
+              <label for="nps">NPS - Additional 80CCD(1B) (₹)</label>
+              <input
+                type="number"
+                id="nps"
+                value="50000"
+                min="0"
+                max="50000"
+                step="10000"
+              />
+              <small style="color: #777">Max: ₹50,000</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="cards full-width hidden" id="resultsSection">
+        <h2>Tax Calculation Summary</h2>
+
+        <div id="singleRegimeResults" class="hidden">
+          <div class="results-grid">
+            <div class="result-item">
+              <div class="result-label">Gross Income</div>
+              <div class="result-value" id="grossIncome">-</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Taxable Income</div>
+              <div class="result-value" id="taxableIncome">-</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Total Tax</div>
+              <div class="result-value" id="totalTax">-</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">In-Hand Salary</div>
+              <div class="result-value" id="inHandSalary">-</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="comparisonResults" class="hidden">
+          <div class="comparison-grid">
+            <div class="regime-card">
+              <h3>Old Tax Regime</h3>
+              <div style="color: #555; font-size: 14px; margin-bottom: 10px">
+                With Deductions
+              </div>
+              <div class="tax-amount" id="oldRegimeTax">-</div>
+              <div style="color: #777; font-size: 14px">
+                Taxable Income: <span id="oldTaxableIncome">-</span>
+              </div>
+              <div style="color: #777; font-size: 14px; margin-top: 5px">
+                In-Hand: <span id="oldInHand">-</span>
+              </div>
+              <div id="oldBetterBadge"></div>
+            </div>
+            <div class="regime-card">
+              <h3>New Tax Regime</h3>
+              <div style="color: #555; font-size: 14px; margin-bottom: 10px">
+                Without Deductions
+              </div>
+              <div class="tax-amount" id="newRegimeTax">-</div>
+              <div style="color: #777; font-size: 14px">
+                Taxable Income: <span id="newTaxableIncome">-</span>
+              </div>
+              <div style="color: #777; font-size: 14px; margin-top: 5px">
+                In-Hand: <span id="newInHand">-</span>
+              </div>
+              <div id="newBetterBadge"></div>
+            </div>
+          </div>
+          <div
+            style="
+              text-align: center;
+              margin-top: 20px;
+              padding: 15px;
+              background: #f5f7fa;
+              border-radius: 10px;
+            "
+          >
+            <div class="savings" id="savingsAmount" style="font-size: 18px">
+              -
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="action-btn">📄 Download PDF</button>
+          <button class="action-btn" onclick="toggleBreakdown()">
+            📊 Show Tax Breakdown
+          </button>
+          <button class="action-btn">💾 Save Calculation</button>
+        </div>
+
+        <!-- Tax Breakdown -->
+        <div class="breakdown-section hidden" id="breakdownSection">
+          <h3>Detailed Tax Breakdown</h3>
+          <div id="breakdownContent"></div>
+        </div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="info-cards">
+        <div class="info-card">
+          <h3>How to Use Tax Calculator</h3>
+          <ul>
+            <li>Select your financial year and age group</li>
+            <li>Enter your annual basic salary and HRA received</li>
+            <li>Add any other income sources</li>
+            <li>Choose tax regime or compare both</li>
+            <li>For old regime, enter your deductions (80C, 80D, etc.)</li>
+            <li>Click "Calculate Tax" to see your liability</li>
+            <li>Compare both regimes to choose the better option</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h3>Old vs New Tax Regime</h3>
+          <p>
+            <strong>Old Regime:</strong> Allows deductions under sections 80C,
+            80D, HRA, home loan interest, etc. Tax rates are higher but you can
+            reduce taxable income significantly with investments.
+          </p>
+          <p style="margin-top: 15px">
+            <strong>New Regime:</strong> Offers lower tax rates but restricts
+            most deductions. Only standard deduction of ₹50,000 is allowed.
+            Better for those with minimal investments.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Popular Tax Deductions</h3>
+          <ul>
+            <li>
+              <strong>80C:</strong> PPF, EPF, ELSS, Life Insurance, NSC (Max
+              ₹1.5L)
+            </li>
+            <li>
+              <strong>80D:</strong> Health insurance premiums (Max ₹25K-₹50K)
+            </li>
+            <li>
+              <strong>80CCD(1B):</strong> Additional NPS contribution (Max ₹50K)
+            </li>
+            <li>
+              <strong>HRA:</strong> House Rent Allowance for salaried
+              individuals
+            </li>
+            <li><strong>Home Loan:</strong> Interest on home loan (Max ₹2L)</li>
+            <li><strong>80E:</strong> Education loan interest (No limit)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let selectedRegime = "old";
+
+      // Set Tax Regime
+      function setRegime(regime) {
+        selectedRegime = regime;
+        document
+          .getElementById("regimeOld")
+          .classList.toggle("active", regime === "old");
+        document
+          .getElementById("regimeNew")
+          .classList.toggle("active", regime === "new");
+        document
+          .getElementById("regimeBoth")
+          .classList.toggle("active", regime === "both");
+
+        // Show/hide deductions card
+        const deductionsCard = document.getElementById("deductionsCard");
+        if (regime === "new") {
+          deductionsCard.style.display = "none";
+        } else {
+          deductionsCard.style.display = "block";
+        }
+      }
+
+      // Reset Form
+      function resetForm() {
+        document.getElementById("financialYear").value = "2024-25";
+        document.getElementById("age").value = "below60";
+        document.getElementById("basicSalary").value = 800000;
+        document.getElementById("hra").value = 200000;
+        document.getElementById("otherIncome").value = 0;
+        document.getElementById("section80C").value = 150000;
+        document.getElementById("section80D").value = 25000;
+        document.getElementById("section80E").value = 0;
+        document.getElementById("section80G").value = 0;
+        document.getElementById("homeLoanInterest").value = 0;
+        document.getElementById("nps").value = 50000;
+        setRegime("old");
+        document.getElementById("resultsSection").classList.add("hidden");
+        document.getElementById("breakdownSection").classList.add("hidden");
+      }
+
+      // Calculate Tax in Old Regime
+      function calculateOldRegimeTax(taxableIncome) {
+        let tax = 0;
+
+        // Tax slabs for old regime
+        if (taxableIncome <= 250000) {
+          tax = 0;
+        } else if (taxableIncome <= 500000) {
+          tax = (taxableIncome - 250000) * 0.05;
+        } else if (taxableIncome <= 1000000) {
+          tax = 12500 + (taxableIncome - 500000) * 0.2;
+        } else {
+          tax = 12500 + 100000 + (taxableIncome - 1000000) * 0.3;
+        }
+
+        return tax;
+      }
+
+      // Calculate Tax in New Regime (FY 2024-25)
+      function calculateNewRegimeTax(taxableIncome) {
+        let tax = 0;
+
+        // New tax slabs for FY 2024-25
+        if (taxableIncome <= 300000) {
+          tax = 0;
+        } else if (taxableIncome <= 600000) {
+          tax = (taxableIncome - 300000) * 0.05;
+        } else if (taxableIncome <= 900000) {
+          tax = 15000 + (taxableIncome - 600000) * 0.1;
+        } else if (taxableIncome <= 1200000) {
+          tax = 15000 + 30000 + (taxableIncome - 900000) * 0.15;
+        } else if (taxableIncome <= 1500000) {
+          tax = 15000 + 30000 + 45000 + (taxableIncome - 1200000) * 0.2;
+        } else {
+          tax = 15000 + 30000 + 45000 + 60000 + (taxableIncome - 1500000) * 0.3;
+        }
+
+        return tax;
+      }
+
+      // Add Cess
+      function addCess(tax) {
+        return tax * 1.04; // 4% Health and Education Cess
+      }
+
+      // Calculate HRA Exemption
+      function calculateHRAExemption(basicSalary, hra) {
+        // Simplified HRA calculation (assuming metro city and 30% rent paid)
+        let exemption1 = hra;
+        let exemption2 = basicSalary * 0.5; // 50% for metro
+        let exemption3 = basicSalary * 0.3 * 12 - basicSalary * 0.1; // Rent paid - 10% of salary
+
+        return Math.min(exemption1, exemption2, Math.max(0, exemption3));
+      }
+
+      // Main Calculate Tax Function
+      function calculateTax() {
+        // Get inputs
+        let basicSalary =
+          parseFloat(document.getElementById("basicSalary").value) || 0;
+        let hra = parseFloat(document.getElementById("hra").value) || 0;
+        let otherIncome =
+          parseFloat(document.getElementById("otherIncome").value) || 0;
+
+        let section80C =
+          parseFloat(document.getElementById("section80C").value) || 0;
+        let section80D =
+          parseFloat(document.getElementById("section80D").value) || 0;
+        let section80E =
+          parseFloat(document.getElementById("section80E").value) || 0;
+        let section80G =
+          parseFloat(document.getElementById("section80G").value) || 0;
+        let homeLoanInterest =
+          parseFloat(document.getElementById("homeLoanInterest").value) || 0;
+        let nps = parseFloat(document.getElementById("nps").value) || 0;
+
+        // Validate deduction limits
+        section80C = Math.min(section80C, 150000);
+        section80D = Math.min(section80D, 100000);
+        homeLoanInterest = Math.min(homeLoanInterest, 200000);
+        nps = Math.min(nps, 50000);
+
+        // Calculate gross income
+        let grossIncome = basicSalary + hra + otherIncome;
+
+        // Standard deduction
+        let standardDeduction = 50000;
+
+        // HRA exemption (only for old regime)
+        let hraExemption = calculateHRAExemption(basicSalary, hra);
+
+        if (selectedRegime === "both") {
+          // Calculate for both regimes
+
+          // OLD REGIME
+          let oldTaxableIncome =
+            grossIncome -
+            standardDeduction -
+            hraExemption -
+            section80C -
+            section80D -
+            section80E -
+            section80G -
+            homeLoanInterest -
+            nps;
+          oldTaxableIncome = Math.max(0, oldTaxableIncome);
+          let oldTax = calculateOldRegimeTax(oldTaxableIncome);
+          let oldTaxWithCess = addCess(oldTax);
+          let oldInHand = grossIncome - oldTaxWithCess;
+
+          // NEW REGIME
+          let newTaxableIncome = grossIncome - standardDeduction;
+          newTaxableIncome = Math.max(0, newTaxableIncome);
+          let newTax = calculateNewRegimeTax(newTaxableIncome);
+          let newTaxWithCess = addCess(newTax);
+          let newInHand = grossIncome - newTaxWithCess;
+
+          // Display comparison
+          document
+            .getElementById("singleRegimeResults")
+            .classList.add("hidden");
+          document
+            .getElementById("comparisonResults")
+            .classList.remove("hidden");
+
+          document.getElementById("oldRegimeTax").textContent =
+            "₹ " + Math.round(oldTaxWithCess).toLocaleString();
+          document.getElementById("oldTaxableIncome").textContent =
+            "₹ " + Math.round(oldTaxableIncome).toLocaleString();
+          document.getElementById("oldInHand").textContent =
+            "₹ " + Math.round(oldInHand).toLocaleString();
+
+          document.getElementById("newRegimeTax").textContent =
+            "₹ " + Math.round(newTaxWithCess).toLocaleString();
+          document.getElementById("newTaxableIncome").textContent =
+            "₹ " + Math.round(newTaxableIncome).toLocaleString();
+          document.getElementById("newInHand").textContent =
+            "₹ " + Math.round(newInHand).toLocaleString();
+
+          // Show better option
+          let oldBadge = document.getElementById("oldBetterBadge");
+          let newBadge = document.getElementById("newBetterBadge");
+          let savingsDiv = document.getElementById("savingsAmount");
+
+          if (oldTaxWithCess < newTaxWithCess) {
+            oldBadge.innerHTML =
+              '<div class="better-badge">✓ Better Option</div>';
+            newBadge.innerHTML = "";
+            savingsDiv.innerHTML =
+              "💰 You save ₹ " +
+              Math.round(newTaxWithCess - oldTaxWithCess).toLocaleString() +
+              " with Old Regime";
+          } else {
+            newBadge.innerHTML =
+              '<div class="better-badge">✓ Better Option</div>';
+            oldBadge.innerHTML = "";
+            savingsDiv.innerHTML =
+              "💰 You save ₹ " +
+              Math.round(oldTaxWithCess - newTaxWithCess).toLocaleString() +
+              " with New Regime";
+          }
+
+          // Generate breakdown for both
+          generateBreakdown("both", {
+            old: {
+              taxableIncome: oldTaxableIncome,
+              tax: oldTax,
+              cess: oldTaxWithCess - oldTax,
+              total: oldTaxWithCess,
+            },
+            new: {
+              taxableIncome: newTaxableIncome,
+              tax: newTax,
+              cess: newTaxWithCess - newTax,
+              total: newTaxWithCess,
+            },
+            grossIncome: grossIncome,
+            standardDeduction: standardDeduction,
+            hraExemption: hraExemption,
+            deductions:
+              section80C +
+              section80D +
+              section80E +
+              section80G +
+              homeLoanInterest +
+              nps,
+          });
+        } else if (selectedRegime === "old") {
+          // OLD REGIME only
+          let taxableIncome =
+            grossIncome -
+            standardDeduction -
+            hraExemption -
+            section80C -
+            section80D -
+            section80E -
+            section80G -
+            homeLoanInterest -
+            nps;
+          taxableIncome = Math.max(0, taxableIncome);
+          let tax = calculateOldRegimeTax(taxableIncome);
+          let taxWithCess = addCess(tax);
+          let inHand = grossIncome - taxWithCess;
+
+          document.getElementById("comparisonResults").classList.add("hidden");
+          document
+            .getElementById("singleRegimeResults")
+            .classList.remove("hidden");
+
+          document.getElementById("grossIncome").textContent =
+            "₹ " + Math.round(grossIncome).toLocaleString();
+          document.getElementById("taxableIncome").textContent =
+            "₹ " + Math.round(taxableIncome).toLocaleString();
+          document.getElementById("totalTax").textContent =
+            "₹ " + Math.round(taxWithCess).toLocaleString();
+          document.getElementById("inHandSalary").textContent =
+            "₹ " + Math.round(inHand).toLocaleString();
+
+          generateBreakdown("old", {
+            taxableIncome: taxableIncome,
+            tax: tax,
+            cess: taxWithCess - tax,
+            total: taxWithCess,
+            grossIncome: grossIncome,
+            standardDeduction: standardDeduction,
+            hraExemption: hraExemption,
+            section80C: section80C,
+            section80D: section80D,
+            section80E: section80E,
+            section80G: section80G,
+            homeLoanInterest: homeLoanInterest,
+            nps: nps,
+          });
+        } else {
+          // NEW REGIME only
+          let taxableIncome = grossIncome - standardDeduction;
+          taxableIncome = Math.max(0, taxableIncome);
+          let tax = calculateNewRegimeTax(taxableIncome);
+          let taxWithCess = addCess(tax);
+          let inHand = grossIncome - taxWithCess;
+
+          document.getElementById("comparisonResults").classList.add("hidden");
+          document
+            .getElementById("singleRegimeResults")
+            .classList.remove("hidden");
+
+          document.getElementById("grossIncome").textContent =
+            "₹ " + Math.round(grossIncome).toLocaleString();
+          document.getElementById("taxableIncome").textContent =
+            "₹ " + Math.round(taxableIncome).toLocaleString();
+          document.getElementById("totalTax").textContent =
+            "₹ " + Math.round(taxWithCess).toLocaleString();
+          document.getElementById("inHandSalary").textContent =
+            "₹ " + Math.round(inHand).toLocaleString();
+
+          generateBreakdown("new", {
+            taxableIncome: taxableIncome,
+            tax: tax,
+            cess: taxWithCess - tax,
+            total: taxWithCess,
+            grossIncome: grossIncome,
+            standardDeduction: standardDeduction,
+          });
+        }
+
+        document.getElementById("resultsSection").classList.remove("hidden");
+
+        // Scroll to results
+        setTimeout(() => {
+          document
+            .getElementById("resultsSection")
+            .scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      }
+
+      // Generate Breakdown
+      function generateBreakdown(regime, data) {
+        let content = "";
+
+        if (regime === "both") {
+          content = `
+            <h4 style="color: #2c3e50; margin-bottom: 15px;">Old Regime Breakdown</h4>
+            <table class="breakdown-table">
+              <tr><td>Gross Income</td><td>₹ ${Math.round(
+                data.grossIncome
+              ).toLocaleString()}</td></tr>
+              <tr><td>Less: Standard Deduction</td><td>₹ ${Math.round(
+                data.standardDeduction
+              ).toLocaleString()}</td></tr>
+              <tr><td>Less: HRA Exemption</td><td>₹ ${Math.round(
+                data.hraExemption
+              ).toLocaleString()}</td></tr>
+              <tr><td>Less: Other Deductions</td><td>₹ ${Math.round(
+                data.deductions
+              ).toLocaleString()}</td></tr>
+              <tr><td><strong>Taxable Income</strong></td><td><strong>₹ ${Math.round(
+                data.old.taxableIncome
+              ).toLocaleString()}</strong></td></tr>
+              <tr><td>Income Tax</td><td>₹ ${Math.round(
+                data.old.tax
+              ).toLocaleString()}</td></tr>
+              <tr><td>Add: Health & Education Cess (4%)</td><td>₹ ${Math.round(
+                data.old.cess
+              ).toLocaleString()}</td></tr>
+              <tr><td><strong>Total Tax Payable</strong></td><td><strong>₹ ${Math.round(
+                data.old.total
+              ).toLocaleString()}</strong></td></tr>
+            </table>
+
+            <h4 style="color: #2c3e50; margin: 25px 0 15px;">New Regime Breakdown</h4>
+            <table class="breakdown-table">
+              <tr><td>Gross Income</td><td>₹ ${Math.round(
+                data.grossIncome
+              ).toLocaleString()}</td></tr>
+              <tr><td>Less: Standard Deduction</td><td>₹ ${Math.round(
+                data.standardDeduction
+              ).toLocaleString()}</td></tr>
+              <tr><td><strong>Taxable Income</strong></td><td><strong>₹ ${Math.round(
+                data.new.taxableIncome
+              ).toLocaleString()}</strong></td></tr>
+              <tr><td>Income Tax</td><td>₹ ${Math.round(
+                data.new.tax
+              ).toLocaleString()}</td></tr>
+              <tr><td>Add: Health & Education Cess (4%)</td><td>₹ ${Math.round(
+                data.new.cess
+              ).toLocaleString()}</td></tr>
+              <tr><td><strong>Total Tax Payable</strong></td><td><strong>₹ ${Math.round(
+                data.new.total
+              ).toLocaleString()}</strong></td></tr>
+            </table>
+          `;
+        } else if (regime === "old") {
+          content = `
+            <table class="breakdown-table">
+              <tr><td>Gross Income</td><td>₹ ${Math.round(
+                data.grossIncome
+              ).toLocaleString()}</td></tr>
+              <tr><td>Less: Standard Deduction</td><td>₹ ${Math.round(
+                data.standardDeduction
+              ).toLocaleString()}</td></tr>
+              <tr><td>Less: HRA Exemption</td><td>₹ ${Math.round(
+                data.hraExemption
+              ).toLocaleString()}</td></tr>
+              ${
+                data.section80C > 0
+                  ? `<tr><td>Less: Section 80C</td><td>₹ ${Math.round(
+                      data.section80C
+                    ).toLocaleString()}</td></tr>`
+                  : ""
+              }
+              ${
+                data.section80D > 0
+                  ? `<tr><td>Less: Section 80D</td><td>₹ ${Math.round(
+                      data.section80D
+                    ).toLocaleString()}</td></tr>`
+                  : ""
+              }
+              ${
+                data.section80E > 0
+                  ? `<tr><td>Less: Section 80E</td><td>₹ ${Math.round(
+                      data.section80E
+                    ).toLocaleString()}</td></tr>`
+                  : ""
+              }
+              ${
+                data.section80G > 0
+                  ? `<tr><td>Less: Section 80G</td><td>₹ ${Math.round(
+                      data.section80G
+                    ).toLocaleString()}</td></tr>`
+                  : ""
+              }
+              ${
+                data.homeLoanInterest > 0
+                  ? `<tr><td>Less: Home Loan Interest</td><td>₹ ${Math.round(
+                      data.homeLoanInterest
+                    ).toLocaleString()}</td></tr>`
+                  : ""
+              }
+              ${
+                data.nps > 0
+                  ? `<tr><td>Less: NPS (80CCD 1B)</td><td>₹ ${Math.round(
+                      data.nps
+                    ).toLocaleString()}</td></tr>`
+                  : ""
+              }
+              <tr><td><strong>Taxable Income</strong></td><td><strong>₹ ${Math.round(
+                data.taxableIncome
+              ).toLocaleString()}</strong></td></tr>
+              <tr><td>Income Tax</td><td>₹ ${Math.round(
+                data.tax
+              ).toLocaleString()}</td></tr>
+              <tr><td>Add: Health & Education Cess (4%)</td><td>₹ ${Math.round(
+                data.cess
+              ).toLocaleString()}</td></tr>
+              <tr><td><strong>Total Tax Payable</strong></td><td><strong>₹ ${Math.round(
+                data.total
+              ).toLocaleString()}</strong></td></tr>
+            </table>
+          `;
+        } else {
+          content = `
+            <table class="breakdown-table">
+              <tr><td>Gross Income</td><td>₹ ${Math.round(
+                data.grossIncome
+              ).toLocaleString()}</td></tr>
+              <tr><td>Less: Standard Deduction</td><td>₹ ${Math.round(
+                data.standardDeduction
+              ).toLocaleString()}</td></tr>
+              <tr><td><strong>Taxable Income</strong></td><td><strong>₹ ${Math.round(
+                data.taxableIncome
+              ).toLocaleString()}</strong></td></tr>
+              <tr><td>Income Tax</td><td>₹ ${Math.round(
+                data.tax
+              ).toLocaleString()}</td></tr>
+              <tr><td>Add: Health & Education Cess (4%)</td><td>₹ ${Math.round(
+                data.cess
+              ).toLocaleString()}</td></tr>
+              <tr><td><strong>Total Tax Payable</strong></td><td><strong>₹ ${Math.round(
+                data.total
+              ).toLocaleString()}</strong></td></tr>
+            </table>
+          `;
+        }
+
+        document.getElementById("breakdownContent").innerHTML = content;
+      }
+
+      // Toggle Breakdown
+      function toggleBreakdown() {
+        document.getElementById("breakdownSection").classList.toggle("hidden");
+      }
+
+      // Initial State
+      window.onload = function () {
+        resetForm();
+        window.scrollTo(0, 0);
+      };
+
+      // Fix: Reset form on page refresh/reload and scroll to top
+      window.addEventListener("pageshow", function (event) {
+        if (event.persisted || performance.navigation.type === 1) {
+          resetForm();
+          window.scrollTo(0, 0);
+        }
+      });
+    </script>
+  </body>
+</html>

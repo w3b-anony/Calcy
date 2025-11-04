@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GST/VAT Calculator - Calculate Tax Instantly</title>
+    <meta
+      name="description"
+      content="Modern Neumorphic GST/VAT Calculator with detailed breakdown, reverse calculation, and invoice generation."
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --primary-bg: #e0e5ec;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #e0e5ec;
+        color: #333;
+        padding: 10px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      /* Top Bar */
+      .header {
+        background: var(--primary-bg);
+        padding: 10px 12px;
+        border: 1px solid #9aa3af;
+        border-radius: 15px;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: nowrap;
+      }
+      .back-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        padding: 8px 12px;
+        border-radius: 10px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        color: #555;
+        font-size: 12px;
+        transition: all 0.3s;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .back-btn:hover {
+        box-shadow: inset 3px 3px 7px #a3b1c6, inset -3px -3px 7px #ffffff;
+      }
+      .back-btn:active {
+        box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+      }
+      .header-center {
+        flex: 1;
+        text-align: center;
+        min-width: 0;
+      }
+      .header-center h1 {
+        font-size: 16px;
+        margin-bottom: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .header-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+      .icon-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .icon-btn:active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+      /* Main Content */
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      /* Card Style */
+      .card {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 15px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+      .card h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+        color: #2c502e;
+      }
+      /* Input Groups */
+      .input-group {
+        margin-bottom: 12px;
+      }
+      .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+        font-size: 13px;
+      }
+      .input-wrapper {
+        position: relative;
+      }
+      input[type="number"],
+      input[type="text"],
+      select {
+        width: 100%;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 10px;
+        border: 1px solid #9aa3af;
+        background: var(--primary-bg);
+        box-shadow: inset 0px 0px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        font-size: 15px;
+        color: #333;
+        transition: all 0.3s;
+      }
+      input[type="number"]:focus,
+      input[type="text"]:focus,
+      select:focus {
+        outline: none;
+        box-shadow: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+      }
+      /* Toggle Switch */
+      .toggle-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .toggle-btn {
+        flex: 1;
+        min-width: 90px;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 10px;
+        border: 1px solid #9aa3afdf;
+        background: var(--primary-bg);
+        box-shadow: 0px 0px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        cursor: pointer;
+        font-size: 13px;
+        color: #555;
+        transition: all 0.3s;
+      }
+      .toggle-btn.active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        color: #3498db;
+        font-weight: 600;
+        animation: pulse 3s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        }
+        50% {
+          transform: scale(1.01);
+          box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        }
+      }
+      /* Buttons */
+      .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+      .calculate-btn {
+        flex: 2;
+        min-width: 150px;
+        padding: 14px 30px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(145deg, #27353fd3, #236895);
+        color: var(--primary-bg);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff;
+        transition: all 0.3s;
+      }
+      .calculate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 8px 8px 16px #a3b1c6, -8px -8px 16px #ffffff;
+      }
+      .calculate-btn:active {
+        transform: translateY(0);
+        box-shadow: inset 2px 2px 8px #2471a3, inset -4px -4px 8px #5dade2;
+      }
+      .reset-btn {
+        flex: 1;
+        min-width: 100px;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 12px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+      }
+      .reset-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+      .reset-btn:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+      /* Results */
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .result-item {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        text-align: center;
+      }
+      .result-label {
+        font-size: 11px;
+        color: #777;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .result-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2c3e50;
+        word-break: break-word;
+      }
+      /* Charts */
+      .chart-wrapper {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 9px 9px 16px #a3b1c6, -9px -9px 16px #ffffff;
+        margin-bottom: 20px;
+      }
+      .chart-wrapper h3 {
+        margin-bottom: 15px;
+        color: #2c3e50;
+        font-size: 16px;
+      }
+      .chart-wrapper canvas {
+        max-height: 250px;
+      }
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+      .action-btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 10px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex: 1;
+        min-width: 140px;
+        justify-content: center;
+      }
+      .action-btn:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+      .action-btn:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+      /* Info Cards */
+      .info-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-top: 20px;
+      }
+      .info-card {
+        background: var(--primary-bg);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid #9aa3af;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+      .info-card h3 {
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 16px;
+      }
+      .info-card p,
+      .info-card ul {
+        color: #555;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+      .info-card ul {
+        list-style: none;
+        padding-left: 0;
+      }
+      .info-card li {
+        padding-left: 20px;
+        position: relative;
+        margin-bottom: 8px;
+      }
+      .info-card li:before {
+        content: "•";
+        position: absolute;
+        left: 8px;
+        color: #3498db;
+        font-weight: bold;
+      }
+      /* Hidden Sections */
+      .hidden {
+        display: none;
+      }
+      .cards {
+        background: var(--primary-bg);
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 15px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+      .cards h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+        color: #2c502e;
+      }
+      .breakdown-section {
+        margin-top: 20px;
+        padding: 15px;
+        background: var(--primary-bg);
+        border-radius: 12px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+      .breakdown-section h3 {
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 16px;
+      }
+      .breakdown-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        margin-bottom: 8px;
+        background: #f5f7fa;
+        border-radius: 8px;
+      }
+      .breakdown-label {
+        font-weight: 600;
+        color: #555;
+      }
+      .breakdown-value {
+        font-weight: 700;
+        color: #2c3e50;
+      }
+      /* Preset Rates */
+      .preset-rates {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .preset-btn {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 8px;
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        font-size: 12px;
+        color: #555;
+        transition: all 0.3s;
+      }
+      .preset-btn:hover {
+        box-shadow: 2px 2px 4px #a3b1c6, -2px -2px 4px #ffffff;
+      }
+      .preset-btn:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+      /* Mobile specific adjustments */
+      @media (max-width: 480px) {
+        body {
+          padding: 8px;
+        }
+        .header {
+          padding: 8px 10px;
+          gap: 6px;
+        }
+        .header-center h1 {
+          font-size: 14px;
+        }
+        .back-btn {
+          padding: 7px 10px;
+          font-size: 11px;
+        }
+        .icon-btn {
+          width: 28px;
+          height: 28px;
+          font-size: 12px;
+        }
+        .card {
+          padding: 12px;
+        }
+        .card h2 {
+          font-size: 16px;
+        }
+        .results-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .result-value {
+          font-size: 16px;
+        }
+        .action-buttons {
+          flex-direction: column;
+        }
+        .action-btn {
+          width: 100%;
+          min-width: auto;
+        }
+      }
+      /* Tablet and larger screens */
+      @media (min-width: 768px) {
+        body {
+          padding: 20px;
+        }
+        .header {
+          padding: 12px 15px;
+        }
+        .back-btn {
+          padding: 10px 16px;
+          font-size: 13px;
+        }
+        .header-center h1 {
+          font-size: 20px;
+        }
+        .icon-btn {
+          width: 36px;
+          height: 36px;
+          font-size: 16px;
+        }
+        .main-content {
+          grid-template-columns: 1fr 1fr;
+          gap: 25px;
+        }
+        .card {
+          padding: 20px;
+        }
+        .card h2 {
+          font-size: 22px;
+        }
+        .cards.full-width {
+          grid-column: 1 / -1;
+        }
+        .results-grid {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 20px;
+        }
+        .result-value {
+          font-size: 24px;
+        }
+        .info-cards {
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 25px;
+        }
+      }
+      @media (min-width: 1024px) {
+        .header-center h1 {
+          font-size: 24px;
+        }
+        .result-value {
+          font-size: 26px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Top Bar -->
+      <div class="header">
+        <button class="back-btn" onclick="window.history.back()">
+          <span>←</span> Go Back
+        </button>
+        <div class="header-center">
+          <h1>GST/VAT Calculator</h1>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" onclick="shareCalculator()" title="Share">
+            📤
+          </button>
+          <button class="icon-btn" onclick="downloadPDF()" title="Download PDF">
+            📄
+          </button>
+          <button
+            class="icon-btn"
+            onclick="toggleDarkMode()"
+            title="Toggle Theme"
+          >
+            🌙
+          </button>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <!-- Input Section -->
+        <div class="card">
+          <h2>Tax Details</h2>
+
+          <div class="input-group">
+            <label>Calculation Type</label>
+            <div class="toggle-group">
+              <button
+                class="toggle-btn active"
+                id="addGST"
+                onclick="setCalculationType('add')"
+              >
+                Add Tax
+              </button>
+              <button
+                class="toggle-btn"
+                id="removeGST"
+                onclick="setCalculationType('remove')"
+              >
+                Remove Tax
+              </button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="amount">Amount</label>
+            <input
+              type="number"
+              id="amount"
+              value="10000"
+              min="0"
+              step="0.01"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="taxRate">Tax Rate (%)</label>
+            <input
+              type="number"
+              id="taxRate"
+              value="18"
+              min="0"
+              max="100"
+              step="0.01"
+            />
+            <div class="preset-rates">
+              <button class="preset-btn" onclick="setTaxRate(5)">5%</button>
+              <button class="preset-btn" onclick="setTaxRate(12)">12%</button>
+              <button class="preset-btn" onclick="setTaxRate(18)">18%</button>
+              <button class="preset-btn" onclick="setTaxRate(28)">28%</button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="taxType">Tax Type</label>
+            <select id="taxType">
+              <option value="GST">GST (Goods & Services Tax)</option>
+              <option value="VAT">VAT (Value Added Tax)</option>
+              <option value="Sales Tax">Sales Tax</option>
+              <option value="Custom">Custom Tax</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="currency">Currency</label>
+            <select id="currency">
+              <option value="₹">INR (₹)</option>
+              <option value="$">USD ($)</option>
+              <option value="€">EUR (€)</option>
+              <option value="£">GBP (£)</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="itemName">Item Name (Optional)</label>
+            <input type="text" id="itemName" placeholder="Enter item name" />
+          </div>
+
+          <div class="btn-group">
+            <button class="calculate-btn" onclick="calculateTax()">
+              Calculate Tax
+            </button>
+            <button class="reset-btn" onclick="resetForm()">Reset</button>
+          </div>
+        </div>
+
+        <!-- Quick Info -->
+        <div class="card">
+          <h2>Quick Tips</h2>
+          <div style="color: #555; line-height: 1.8">
+            <p style="margin-bottom: 15px">
+              <strong>GST</strong> is a comprehensive indirect tax levied on the
+              supply of goods and services.
+            </p>
+            <p style="margin-bottom: 15px">
+              Use "Add Tax" to calculate the final price including tax.
+            </p>
+            <p style="margin-bottom: 15px">
+              Use "Remove Tax" to find the original price from a tax-inclusive
+              amount.
+            </p>
+            <p style="margin-bottom: 15px">
+              Click preset buttons for common GST rates in India.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="cards full-width hidden" id="resultsSection">
+        <h2>Tax Breakdown</h2>
+        <div class="results-grid">
+          <div class="result-item">
+            <div class="result-label">Original Amount</div>
+            <div class="result-value" id="originalAmount">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Tax Amount</div>
+            <div class="result-value" id="taxAmount">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Final Amount</div>
+            <div class="result-value" id="finalAmount">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Tax Rate</div>
+            <div class="result-value" id="displayTaxRate">-</div>
+          </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-wrapper">
+          <h3>Tax Breakdown</h3>
+          <canvas id="taxChart"></canvas>
+        </div>
+
+        <!-- Detailed Breakdown -->
+        <div class="breakdown-section" id="breakdownSection">
+          <h3>Detailed Breakdown</h3>
+          <div id="breakdownDetails"></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="action-btn" onclick="downloadPDF()">
+            📄 Download PDF
+          </button>
+          <button class="action-btn" onclick="downloadInvoice()">
+            🧾 Generate Invoice
+          </button>
+          <button class="action-btn" onclick="copyToClipboard()">
+            📋 Copy Results
+          </button>
+        </div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="info-cards">
+        <div class="info-card">
+          <h3>How to Use the GST/VAT Calculator</h3>
+          <ul>
+            <li>Select calculation type: Add or Remove tax</li>
+            <li>Enter the amount (with or without tax)</li>
+            <li>Input the tax rate or select a preset</li>
+            <li>Choose your tax type and currency</li>
+            <li>Click "Calculate Tax" to see results</li>
+            <li>Download PDF or generate an invoice if needed</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h3>Understanding GST in India</h3>
+          <p>
+            GST has four main tax slabs: 5%, 12%, 18%, and 28%. Essential items
+            are taxed at lower rates, while luxury goods attract higher rates.
+          </p>
+          <p style="margin-top: 15px">
+            <strong>Example:</strong> If you buy goods worth ₹10,000 with 18%
+            GST, the tax amount will be ₹1,800, making the final price ₹11,800.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Add vs Remove Tax</h3>
+          <p>
+            <strong>Add Tax:</strong> Use this when you have the base price and
+            want to calculate the final price with tax included.
+          </p>
+          <p style="margin-top: 15px">
+            <strong>Remove Tax:</strong> Use this when you have the final price
+            (inclusive of tax) and want to find the original price before tax.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let calculationType = "add";
+      let taxChart;
+
+      function setCalculationType(type) {
+        calculationType = type;
+        document
+          .getElementById("addGST")
+          .classList.toggle("active", type === "add");
+        document
+          .getElementById("removeGST")
+          .classList.toggle("active", type === "remove");
+      }
+
+      function setTaxRate(rate) {
+        document.getElementById("taxRate").value = rate;
+      }
+
+      function calculateTax() {
+        let amount = parseFloat(document.getElementById("amount").value);
+        let taxRate = parseFloat(document.getElementById("taxRate").value);
+        let currency = document.getElementById("currency").value;
+        let taxType = document.getElementById("taxType").value;
+
+        if (!amount || amount <= 0 || !taxRate || taxRate < 0) {
+          alert("Please enter valid amount and tax rate");
+          return;
+        }
+
+        let originalAmount, taxAmount, finalAmount;
+
+        if (calculationType === "add") {
+          originalAmount = amount;
+          taxAmount = (amount * taxRate) / 100;
+          finalAmount = amount + taxAmount;
+        } else {
+          finalAmount = amount;
+          originalAmount = amount / (1 + taxRate / 100);
+          taxAmount = amount - originalAmount;
+        }
+
+        // Update UI
+        document.getElementById("resultsSection").classList.remove("hidden");
+        document.getElementById("originalAmount").textContent = formatCurrency(
+          originalAmount,
+          currency
+        );
+        document.getElementById("taxAmount").textContent = formatCurrency(
+          taxAmount,
+          currency
+        );
+        document.getElementById("finalAmount").textContent = formatCurrency(
+          finalAmount,
+          currency
+        );
+        document.getElementById("displayTaxRate").textContent = taxRate + "%";
+
+        // Draw chart
+        drawChart(originalAmount, taxAmount, currency);
+
+        // Show breakdown
+        showBreakdown(
+          originalAmount,
+          taxAmount,
+          finalAmount,
+          taxRate,
+          currency,
+          taxType
+        );
+
+        // Scroll to results on mobile
+        if (window.innerWidth < 768) {
+          document
+            .getElementById("resultsSection")
+            .scrollIntoView({ behavior: "smooth" });
+        }
+      }
+
+      function formatCurrency(value, currency) {
+        return (
+          currency +
+          " " +
+          value.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        );
+      }
+
+      function drawChart(original, tax, currency) {
+        if (taxChart) taxChart.destroy();
+
+        const ctx = document.getElementById("taxChart");
+        if (ctx) {
+          taxChart = new Chart(ctx.getContext("2d"), {
+            type: "doughnut",
+            data: {
+              labels: ["Original Amount", "Tax Amount"],
+              datasets: [
+                {
+                  data: [original, tax],
+                  backgroundColor: ["#3498db", "#e67e22"],
+                  borderColor: "#e0e5ec",
+                  borderWidth: 2,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    padding: 10,
+                    font: { size: 12 },
+                  },
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      let label = context.label || "";
+                      if (label) {
+                        label += ": ";
+                      }
+                      label +=
+                        currency +
+                        " " +
+                        context.parsed.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        });
+                      return label;
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }
+      }
+
+      function showBreakdown(original, tax, final, rate, currency, taxType) {
+        const breakdownDetails = document.getElementById("breakdownDetails");
+
+        let html = `
+<div class="breakdown-item">
+<span class="breakdown-label">Base Amount:</span>
+<span class="breakdown-value">${formatCurrency(original, currency)}</span>
+</div>
+<div class="breakdown-item">
+<span class="breakdown-label">${taxType} (${rate}%):</span>
+<span class="breakdown-value">${formatCurrency(tax, currency)}</span>
+</div>
+<div class="breakdown-item" style="background: #d5f4e6;">
+<span class="breakdown-label">Total Amount:</span>
+<span class="breakdown-value">${formatCurrency(final, currency)}</span>
+</div>
+`;
+
+        // Add CGST/SGST breakdown for GST
+        if (taxType === "GST") {
+          const cgst = tax / 2;
+          const sgst = tax / 2;
+          html += `
+<div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #ddd;">
+<h4 style="margin-bottom: 10px; color: #2c3e50;">GST Components</h4>
+<div class="breakdown-item">
+<span class="breakdown-label">CGST (${rate / 2}%):</span>
+<span class="breakdown-value">${formatCurrency(cgst, currency)}</span>
+</div>
+<div class="breakdown-item">
+<span class="breakdown-label">SGST (${rate / 2}%):</span>
+<span class="breakdown-value">${formatCurrency(sgst, currency)}</span>
+</div>
+</div>
+`;
+        }
+
+        breakdownDetails.innerHTML = html;
+      }
+
+      function resetForm() {
+        document.getElementById("amount").value = 10000;
+        document.getElementById("taxRate").value = 18;
+        document.getElementById("currency").value = "₹";
+        document.getElementById("taxType").value = "GST";
+        document.getElementById("itemName").value = "";
+        setCalculationType("add");
+        document.getElementById("resultsSection").classList.add("hidden");
+
+        if (taxChart) {
+          taxChart.destroy();
+          taxChart = null;
+        }
+
+        if (window.innerWidth < 768) {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+
+      function downloadPDF() {
+        if (
+          document.getElementById("resultsSection").classList.contains("hidden")
+        ) {
+          alert("Please calculate tax first");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        let doc = new jsPDF();
+
+        doc.setFontSize(18);
+        doc.setTextColor(44, 62, 80);
+        doc.text("GST/VAT Calculator Results", 105, 15, { align: "center" });
+
+        doc.setFontSize(12);
+        doc.setTextColor(85, 85, 85);
+        let yPos = 30;
+
+        doc.text(
+          "Original Amount: " +
+            document.getElementById("originalAmount").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "Tax Amount: " + document.getElementById("taxAmount").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "Final Amount: " + document.getElementById("finalAmount").textContent,
+          20,
+          yPos
+        );
+        yPos += 10;
+        doc.text(
+          "Tax Rate: " + document.getElementById("displayTaxRate").textContent,
+          20,
+          yPos
+        );
+        yPos += 20;
+
+        doc.setFontSize(14);
+        doc.setTextColor(44, 62, 80);
+        doc.text("Calculation Details", 20, yPos);
+        yPos += 10;
+
+        doc.setFontSize(11);
+        doc.setTextColor(85, 85, 85);
+        doc.text(
+          "Tax Type: " + document.getElementById("taxType").value,
+          20,
+          yPos
+        );
+        yPos += 8;
+        doc.text(
+          "Calculation Type: " +
+            (calculationType === "add" ? "Tax Added" : "Tax Removed"),
+          20,
+          yPos
+        );
+        yPos += 8;
+
+        const itemName = document.getElementById("itemName").value;
+        if (itemName) {
+          doc.text("Item: " + itemName, 20, yPos);
+          yPos += 8;
+        }
+
+        doc.setFontSize(9);
+        doc.setTextColor(150, 150, 150);
+        doc.text("Generated by GST/VAT Calculator", 105, 280, {
+          align: "center",
+        });
+        doc.text(new Date().toLocaleString(), 105, 285, { align: "center" });
+
+        doc.save("GST-VAT-Calculation.pdf");
+      }
+
+      function downloadInvoice() {
+        if (
+          document.getElementById("resultsSection").classList.contains("hidden")
+        ) {
+          alert("Please calculate tax first");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        let doc = new jsPDF();
+
+        // Invoice Header
+        doc.setFontSize(24);
+        doc.setTextColor(44, 62, 80);
+        doc.text("TAX INVOICE", 105, 20, { align: "center" });
+
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Invoice Date: " + new Date().toLocaleDateString(), 105, 28, {
+          align: "center",
+        });
+        doc.text(
+          "Invoice No: INV-" + Date.now().toString().slice(-8),
+          105,
+          34,
+          { align: "center" }
+        );
+
+        // Line separator
+        doc.setDrawColor(200, 200, 200);
+        doc.line(20, 40, 190, 40);
+
+        // Item Details
+        let yPos = 50;
+        doc.setFontSize(12);
+        doc.setTextColor(44, 62, 80);
+        doc.text("Item Details", 20, yPos);
+
+        yPos += 10;
+        doc.setFontSize(10);
+        doc.setTextColor(85, 85, 85);
+
+        const itemName =
+          document.getElementById("itemName").value || "Product/Service";
+        doc.text("Description: " + itemName, 20, yPos);
+
+        // Table Header
+        yPos += 15;
+        doc.setFillColor(230, 230, 230);
+        doc.rect(20, yPos - 5, 170, 8, "F");
+        doc.setFontSize(10);
+        doc.setTextColor(44, 62, 80);
+        doc.text("Particulars", 25, yPos);
+        doc.text("Amount", 170, yPos, { align: "right" });
+
+        // Table Content
+        yPos += 10;
+        doc.setTextColor(85, 85, 85);
+        doc.text("Base Amount", 25, yPos);
+        doc.text(
+          document.getElementById("originalAmount").textContent,
+          170,
+          yPos,
+          { align: "right" }
+        );
+
+        yPos += 8;
+        const taxType = document.getElementById("taxType").value;
+        const taxRate = document.getElementById("displayTaxRate").textContent;
+        doc.text(taxType + " (" + taxRate + ")", 25, yPos);
+        doc.text(document.getElementById("taxAmount").textContent, 170, yPos, {
+          align: "right",
+        });
+
+        // If GST, show CGST/SGST breakdown
+        if (taxType === "GST") {
+          const taxAmountText =
+            document.getElementById("taxAmount").textContent;
+          const taxValue = parseFloat(taxAmountText.replace(/[^0-9.-]+/g, ""));
+          const currency = document.getElementById("currency").value;
+          const halfTax = taxValue / 2;
+          const rate = parseFloat(taxRate) / 2;
+
+          yPos += 8;
+          doc.setFontSize(9);
+          doc.text("  CGST (" + rate + "%)", 25, yPos);
+          doc.text(currency + " " + halfTax.toFixed(2), 170, yPos, {
+            align: "right",
+          });
+
+          yPos += 6;
+          doc.text("  SGST (" + rate + "%)", 25, yPos);
+          doc.text(currency + " " + halfTax.toFixed(2), 170, yPos, {
+            align: "right",
+          });
+          doc.setFontSize(10);
+        }
+
+        // Total
+        yPos += 12;
+        doc.setDrawColor(200, 200, 200);
+        doc.line(20, yPos - 5, 190, yPos - 5);
+        doc.setFontSize(12);
+        doc.setTextColor(44, 62, 80);
+        doc.text("Total Amount", 25, yPos);
+        doc.text(
+          document.getElementById("finalAmount").textContent,
+          170,
+          yPos,
+          { align: "right" }
+        );
+
+        // Footer
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        doc.text("This is a computer-generated invoice", 105, 270, {
+          align: "center",
+        });
+        doc.text("Generated by GST/VAT Calculator", 105, 276, {
+          align: "center",
+        });
+        doc.text(new Date().toLocaleString(), 105, 282, { align: "center" });
+
+        doc.save("Tax-Invoice.pdf");
+      }
+
+      function copyToClipboard() {
+        if (
+          document.getElementById("resultsSection").classList.contains("hidden")
+        ) {
+          alert("Please calculate tax first");
+          return;
+        }
+
+        const original = document.getElementById("originalAmount").textContent;
+        const tax = document.getElementById("taxAmount").textContent;
+        const final = document.getElementById("finalAmount").textContent;
+        const rate = document.getElementById("displayTaxRate").textContent;
+        const taxType = document.getElementById("taxType").value;
+        const itemName = document.getElementById("itemName").value || "N/A";
+
+        const text = `${taxType} Calculation Results
+━━━━━━━━━━━━━━━━━━━━
+Item: ${itemName}
+Original Amount: ${original}
+Tax (${rate}): ${tax}
+Final Amount: ${final}
+━━━━━━━━━━━━━━━━━━━━
+Generated on: ${new Date().toLocaleString()}`;
+
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {
+            alert("Results copied to clipboard!");
+          });
+        } else {
+          alert("Clipboard not supported on this browser");
+        }
+      }
+
+      function shareCalculator() {
+        if (navigator.share) {
+          navigator
+            .share({
+              title: "GST/VAT Calculator",
+              text: "Calculate GST/VAT instantly with this easy-to-use calculator!",
+              url: window.location.href,
+            })
+            .then(() => console.log("Shared successfully"))
+            .catch((error) => console.log("Error sharing:", error));
+        } else {
+          const url = window.location.href;
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(() => {
+              alert("Link copied to clipboard!");
+            });
+          } else {
+            alert("Sharing not supported on this browser. URL: " + url);
+          }
+        }
+      }
+
+      function toggleDarkMode() {
+        alert("Dark mode feature coming soon!");
+      }
+
+      // Responsive: recalculate chart on window resize
+      let resizeTimeout;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          if (
+            !document
+              .getElementById("resultsSection")
+              .classList.contains("hidden")
+          ) {
+            if (taxChart) taxChart.resize();
+          }
+        }, 250);
+      });
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        setCalculationType("add");
+
+        // Add input validation
+        const numberInputs = document.querySelectorAll('input[type="number"]');
+        numberInputs.forEach((input) => {
+          input.addEventListener("input", function () {
+            if (this.value < 0) this.value = 0;
+            if (
+              this.hasAttribute("max") &&
+              parseFloat(this.value) > parseFloat(this.getAttribute("max"))
+            ) {
+              this.value = this.getAttribute("max");
+            }
+          });
+        });
+
+        // Prevent form submission on Enter key
+        document.addEventListener("keypress", function (e) {
+          if (e.key === "Enter" && e.target.tagName !== "BUTTON") {
+            e.preventDefault();
+            calculateTax();
+          }
+        });
+
+        // Add touch feedback for mobile
+        if ("ontouchstart" in window) {
+          document.querySelectorAll("button, .toggle-btn").forEach((btn) => {
+            btn.addEventListener("touchstart", function () {
+              this.style.transform = "scale(0.98)";
+            });
+            btn.addEventListener("touchend", function () {
+              this.style.transform = "scale(1)";
+            });
+          });
+        }
+      });
+
+      // Prevent zoom on double tap for better mobile experience
+      let lastTouchEnd = 0;
+      document.addEventListener(
+        "touchend",
+        function (event) {
+          const now = new Date().getTime();
+          if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+          }
+          lastTouchEnd = now;
+        },
+        false
+      );
+
+      // Add viewport height fix for mobile browsers
+      function setVH() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--vh", `${vh}px`);
+      }
+
+      setVH();
+      window.addEventListener("resize", setVH);
+      window.addEventListener("orientationchange", setVH);
+    </script>
+  </body>
+</html>

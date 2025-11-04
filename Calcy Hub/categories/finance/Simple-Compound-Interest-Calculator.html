@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Compound Interest Calculator — Calculate Interest, Compare with FD & SIP
+    </title>
+    <meta
+      name="description"
+      content="Free Compound Interest Calculator in Neumorphism style. Calculate maturity value, compare with FD or SIP, download detailed reports, and view charts."
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-bg: #e0e5ec;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #e0e5ec;
+        color: #333;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Header */
+      .header {
+        background: var(--primary-bg);
+        padding: 15px;
+        border: 1px solid #9aa3af;
+        border-radius: 20px;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .back-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        padding: 12px 20px;
+        border-radius: 12px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        color: #555;
+        font-size: 14px;
+        transition: all 0.3s;
+      }
+
+      .back-btn:hover {
+        box-shadow: inset 3px 3px 7px #a3b1c6, inset -3px -3px 7px #ffffff;
+      }
+
+      .back-btn:active {
+        box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+      }
+
+      .header-left {
+        display: flex;
+      }
+
+      .header-center {
+        flex: 1;
+        text-align: center;
+      }
+
+      .header-center h1 {
+        font-size: 28px;
+        margin-bottom: 5px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        color: #777;
+        margin-top: 5px;
+      }
+
+      .header-right {
+        display: flex;
+        gap: 10px;
+      }
+
+      .icon-btn {
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.3s;
+      }
+
+      .icon-btn:active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      /* Card Style */
+      .card {
+        background: var(--primary-bg);
+        padding: 20px;
+        border-radius: 20px;
+        border: 1px solid #89929d;
+        box-shadow: 0px 0px 16px #a3b1c6, -9px -9px 16px #ffffff;
+        margin-bottom: 30px;
+      }
+
+      .card h2 {
+        font-size: 22px;
+        margin-bottom: 15px;
+        color: #2c502e;
+      }
+
+      .card h3 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: #2c3e50;
+      }
+
+      /* Input Groups */
+      .input-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .input-group {
+        margin-bottom: 15px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #555;
+        font-size: 14px;
+      }
+
+      .tooltip {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        background: var(--primary-bg);
+        border: 1px solid #9aa3af;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 18px;
+        font-size: 12px;
+        margin-left: 5px;
+        cursor: help;
+        box-shadow: 2px 2px 4px #a3b1c6, -2px -2px 4px #ffffff;
+      }
+
+      .input-field,
+      select {
+        width: 100%;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 12px;
+        border: 1px solid #9aa3af;
+        background: var(--primary-bg);
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        font-size: 16px;
+        color: #333;
+        transition: all 0.3s;
+      }
+
+      .input-field:focus,
+      select:focus {
+        outline: none;
+        box-shadow: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+      }
+
+      /* Toggle Container */
+      .toggle-container {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .toggle-option {
+        flex: 1;
+        min-width: 150px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 12px;
+        border: 1px solid #9aa3af;
+        background: var(--primary-bg);
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        cursor: pointer;
+        font-size: 14px;
+        color: #555;
+        transition: all 0.3s;
+      }
+
+      .toggle-option.active {
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        color: #3498db;
+        font-weight: 600;
+      }
+
+      /* Buttons */
+      .btn-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .btn-primary {
+        flex: 2;
+        min-width: 200px;
+        padding: 15px 40px;
+        border: none;
+        border-radius: 15px;
+        background: linear-gradient(145deg, #27353fd3, #236895);
+        color: var(--primary-bg);
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 6px 6px 12px #a3b1c6, -6px -6px 12px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 8px 8px 16px #a3b1c6, -8px -8px 16px #ffffff;
+      }
+
+      .btn-primary:active {
+        transform: translateY(0);
+        box-shadow: inset 2px 2px 8px #2471a3, inset -4px -4px 8px #5dade2;
+      }
+
+      .btn-secondary {
+        flex: 1;
+        min-width: 120px;
+        padding: 14px 28px;
+        border: none;
+        border-radius: 12px;
+        background: var(--primary-bg);
+        color: #555;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px #a3b1c6, -5px -5px 10px #ffffff;
+        transition: all 0.3s;
+      }
+
+      .btn-secondary:hover {
+        box-shadow: 3px 3px 6px #a3b1c6, -3px -3px 6px #ffffff;
+      }
+
+      .btn-secondary:active {
+        box-shadow: inset 3px 3px 6px #a3b1c6, inset -3px -3px 6px #ffffff;
+      }
+
+      /* Results Section */
+      .results {
+        display: none;
+      }
+
+      .results.show {
+        display: block;
+      }
+
+      .result-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .result-box {
+        background: var(--primary-bg);
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+        text-align: center;
+      }
+
+      .result-label {
+        font-size: 13px;
+        color: #777;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .result-value {
+        font-size: 26px;
+        font-weight: 700;
+        color: #2c3e50;
+      }
+
+      /* Formula Section */
+      .formula-section {
+        display: none;
+        margin-top: 30px;
+        padding: 20px;
+        background: var(--primary-bg);
+        border-radius: 15px;
+        box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+      }
+
+      .formula-section.show {
+        display: block;
+      }
+
+      .formula {
+        background: #f5f7fa;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 15px 0;
+        font-family: "Courier New", monospace;
+        overflow-x: auto;
+        font-size: 14px;
+      }
+
+      #calculationSteps {
+        margin-top: 15px;
+        color: #555;
+        line-height: 1.8;
+      }
+
+      /* Charts */
+      .chart-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+      }
+
+      .chart-container {
+        background: var(--primary-bg);
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 9px 9px 16px #a3b1c6, -9px -9px 16px #ffffff;
+      }
+
+      .chart-container h3 {
+        margin-bottom: 20px;
+        color: #2c3e50;
+        font-size: 18px;
+      }
+
+      /* Comparison Section */
+      #comparisonSection {
+        margin-top: 30px;
+      }
+
+      #comparisonSection.hidden {
+        display: none;
+      }
+
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .suggestion-label {
+        background: var(--primary-bg);
+        padding: 15px 20px;
+        border-radius: 12px;
+        border: 1px solid #9aa3af;
+        box-shadow: 4px 4px 8px #a3b1c6, -4px -4px 8px #ffffff;
+        text-align: center;
+        color: #555;
+        font-size: 14px;
+        margin-top: 20px;
+      }
+
+      /* Info Section */
+      .info-section {
+        color: #555;
+        line-height: 1.8;
+      }
+
+      .info-section ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .info-section li {
+        padding-left: 25px;
+        position: relative;
+        margin-bottom: 10px;
+      }
+
+      .info-section li:before {
+        content: "•";
+        position: absolute;
+        left: 10px;
+        color: #3498db;
+        font-weight: bold;
+      }
+
+      .info-section p {
+        margin-bottom: 15px;
+      }
+
+      .example-box {
+        background: #f5f7fa;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 20px 0;
+        line-height: 1.8;
+        font-size: 14px;
+        box-shadow: inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff;
+      }
+
+      /* Hidden Elements */
+      .hidden {
+        display: none;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .header {
+          flex-direction: column;
+        }
+
+        .header-center {
+          order: -1;
+        }
+
+        .header-center h1 {
+          font-size: 22px;
+        }
+
+        .header-left,
+        .header-right {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .card {
+          padding: 15px;
+        }
+
+        .input-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .btn-group {
+          flex-direction: column;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+          width: 100%;
+        }
+
+        .result-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .chart-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (min-width: 768px) {
+        .results {
+          grid-column: 1 / -1;
+        }
+      }
+
+      .main-content {
+        display: flex;
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .main-content .card {
+        flex: 1;
+      }
+
+      /* Full Width Utility Class */
+      .full-width {
+        grid-column: 1 / -1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-left">
+          <button class="back-btn" onclick="window.location.href='../../home.html'">
+            <span>←</span> Go Back
+          </button>
+        </div>
+        <div class="header-center">
+          <h1>Compound Interest Calculator 💹</h1>
+          <p class="subtitle">
+            Calculate your investment growth with the power of compounding.
+          </p>
+        </div>
+        <div class="header-right">
+          <button class="icon-btn" onclick="shareCalculator()" title="Share">
+            📤
+          </button>
+          <button class="icon-btn" onclick="downloadPDF()" title="Download PDF">
+            📄
+          </button>
+          <button
+            class="icon-btn"
+            onclick="toggleDarkMode()"
+            title="Toggle Theme"
+          >
+            🌓
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content Grid (ADD THIS WRAPPER) -->
+      <div class="main-content">
+        <!-- Left Side: Input Card -->
+        <div class="card">
+          <h2>Calculate Your Investment Growth</h2>
+          <form id="calculatorForm">
+            <div class="input-grid">
+              <div class="input-group">
+                <label
+                  >Principal Amount (₹)
+                  <span class="tooltip" data-tip="Initial investment amount"
+                    >?</span
+                  ></label
+                >
+                <input
+                  type="number"
+                  id="principal"
+                  class="input-field"
+                  placeholder="e.g., 100000"
+                  value="100000"
+                  required
+                />
+              </div>
+
+              <div class="input-group">
+                <label
+                  >Annual Interest Rate (%)
+                  <span class="tooltip" data-tip="Expected annual return rate"
+                    >?</span
+                  ></label
+                >
+                <input
+                  type="number"
+                  id="rate"
+                  class="input-field"
+                  placeholder="e.g., 12"
+                  value="12"
+                  step="0.1"
+                  required
+                />
+              </div>
+
+              <div class="input-group">
+                <label
+                  >Investment Duration (Years)
+                  <span class="tooltip" data-tip="How long you'll invest"
+                    >?</span
+                  ></label
+                >
+                <input
+                  type="number"
+                  id="time"
+                  class="input-field"
+                  placeholder="e.g., 5"
+                  value="5"
+                  required
+                />
+              </div>
+
+              <div class="input-group">
+                <label
+                  >Compounding Frequency
+                  <span
+                    class="tooltip"
+                    data-tip="How often interest is calculated"
+                    >?</span
+                  ></label
+                >
+                <select id="frequency" class="input-field">
+                  <option value="12">Monthly</option>
+                  <option value="4">Quarterly</option>
+                  <option value="2">Half-Yearly</option>
+                  <option value="1">Yearly</option>
+                </select>
+              </div>
+
+              <div class="input-group">
+                <label>Currency Selector</label>
+                <select id="currency" class="input-field">
+                  <option value="₹">INR (₹)</option>
+                  <option value="$">USD ($)</option>
+                  <option value="€">EUR (€)</option>
+                  <option value="£">GBP (£)</option>
+                </select>
+              </div>
+
+              <div class="input-group">
+                <label>Comparison Mode</label>
+                <select id="comparison" class="input-field">
+                  <option value="none">No Comparison</option>
+                  <option value="fd">Compare with FD (8%)</option>
+                  <option value="sip">Compare with SIP (10%)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label
+                >Contribution Type
+                <span
+                  class="tooltip"
+                  data-tip="One-time or recurring investment"
+                  >?</span
+                ></label
+              >
+              <div class="toggle-container">
+                <button
+                  type="button"
+                  class="toggle-option active"
+                  onclick="setContributionType('onetime')"
+                >
+                  One-Time Investment
+                </button>
+                <button
+                  type="button"
+                  class="toggle-option"
+                  onclick="setContributionType('recurring')"
+                >
+                  Recurring (Monthly SIP)
+                </button>
+              </div>
+            </div>
+
+            <div class="input-group hidden" id="sipAmountGroup">
+              <label
+                >Monthly SIP Amount
+                <span class="tooltip" data-tip="Monthly investment amount"
+                  >?</span
+                ></label
+              >
+              <input
+                type="number"
+                id="sipAmount"
+                class="input-field"
+                placeholder="e.g., 5000"
+                value="5000"
+              />
+            </div>
+
+            <div class="btn-group">
+              <button type="submit" class="btn-primary">
+                Calculate Compound Interest
+              </button>
+              <button type="button" class="btn-secondary" onclick="resetForm()">
+                Reset
+              </button>
+            </div>
+          </form>
+        </div>
+        <!-- Right Side: Info/Tips Card -->
+        <div class="card">
+          <h2>Quick Tips</h2>
+          <div style="color: #555; line-height: 1.8">
+            <p style="margin-bottom: 15px">
+              💹 <strong>Compound Interest</strong> means earning interest on
+              your interest.
+            </p>
+            <p style="margin-bottom: 15px">
+              💡 Monthly compounding gives better returns than yearly.
+            </p>
+            <p style="margin-bottom: 15px">
+              📈 Starting early maximizes the power of compounding.
+            </p>
+            <p style="margin-bottom: 15px">
+              🎯 Use SIP mode for disciplined monthly investing.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- End Main Content Grid -->
+
+      <!-- Results Section (Full Width) -->
+      <div class="card results full-width" id="resultsSection">
+        <h2>Results & Growth Charts</h2>
+
+        <div class="result-grid">
+          <div class="result-box">
+            <div class="result-label">Total Investment</div>
+            <div class="result-value" id="totalInvestment">₹0</div>
+          </div>
+          <div class="result-box">
+            <div class="result-label">Total Interest Earned</div>
+            <div class="result-value" id="totalInterest">₹0</div>
+          </div>
+          <div class="result-box">
+            <div class="result-label">Maturity Value</div>
+            <div class="result-value" id="maturityValue">₹0</div>
+          </div>
+          <div class="result-box">
+            <div class="result-label">Effective Annual Rate (EAR)</div>
+            <div class="result-value" id="effectiveRate">0%</div>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn-secondary" onclick="toggleFormula()">
+            📐 Show Detailed Calculation
+          </button>
+          <button class="btn-secondary" onclick="downloadReport()">
+            📥 Download Report (PDF)
+          </button>
+        </div>
+
+        <div class="formula-section" id="formulaSection">
+          <h3>Step-by-Step Calculation</h3>
+          <div class="formula">Formula: A = P (1 + r/n)^(n × t)</div>
+          <div id="calculationSteps"></div>
+        </div>
+
+        <div class="chart-grid">
+          <div class="chart-container">
+            <h3>Principal vs Interest</h3>
+            <canvas id="pieChart"></canvas>
+          </div>
+          <div class="chart-container">
+            <h3>Year-Wise Growth</h3>
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Comparison Section -->
+        <div id="comparisonSection" class="hidden">
+          <h3 style="color: var(--accent); margin: 30px 0 20px">
+            Investment Comparison
+          </h3>
+          <div class="comparison-grid" id="comparisonGrid"></div>
+          <div class="suggestion-label">
+            💡 Compounding grows 2x faster than simple interest over time!
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Sections -->
+      <div class="card info-section">
+        <h3>How to Use the Compound Interest Calculator</h3>
+        <ul>
+          <li>
+            Enter your initial investment amount in the Principal Amount field
+          </li>
+          <li>
+            Set the expected annual interest rate (e.g., 12% for equity, 8% for
+            FD)
+          </li>
+          <li>Choose your investment duration in years</li>
+          <li>
+            Select how often interest compounds (monthly gives better returns)
+          </li>
+          <li>
+            Choose between one-time investment or monthly SIP contributions
+          </li>
+          <li>Select your preferred currency and comparison mode</li>
+          <li>
+            Click "Calculate" to see your investment growth with detailed charts
+          </li>
+          <li>Download your calculation report or share with others</li>
+        </ul>
+      </div>
+
+      <div class="card info-section">
+        <h3>What is Compound Interest?</h3>
+        <p>
+          Compound Interest means earning interest on both your initial
+          principal and the accumulated interest over time. Unlike simple
+          interest which only calculates interest on the principal, compound
+          interest allows your money to grow exponentially.
+        </p>
+
+        <p>
+          The magic of compounding happens because you earn "interest on
+          interest" - each period's interest is added to the principal for the
+          next period's calculation.
+        </p>
+
+        <div class="example-box">
+          <strong>Example:</strong><br />
+          If you invest ₹10,000 at 10% annual interest for 3 years compounded
+          yearly:<br /><br />
+          <strong>Year 1:</strong> ₹10,000 + (₹10,000 × 10%) = ₹11,000<br />
+          <strong>Year 2:</strong> ₹11,000 + (₹11,000 × 10%) = ₹12,100<br />
+          <strong>Year 3:</strong> ₹12,100 + (₹12,100 × 10%) = ₹13,310<br /><br />
+          <strong>Final Amount: ₹13,310</strong> (vs ₹13,000 with simple
+          interest)
+        </div>
+
+        <p>
+          The difference becomes more dramatic over longer periods and with more
+          frequent compounding. This is why starting early and staying invested
+          for longer periods can dramatically increase your wealth.
+        </p>
+      </div>
+    </div>
+    <script>
+      /* --- Utility Functions --- */
+      function formatCurrency(val, currency) {
+        val = Number(val);
+        if (isNaN(val)) return currency + "0";
+        return (
+          currency + val.toLocaleString("en-IN", { maximumFractionDigits: 2 })
+        );
+      }
+
+      /* --- Contribution Type Toggle --- */
+      let contributionType = "onetime";
+      function setContributionType(type) {
+        contributionType = type;
+        document
+          .querySelectorAll(".toggle-option")
+          .forEach((btn) => btn.classList.remove("active"));
+        if (type === "onetime") {
+          document
+            .querySelectorAll(".toggle-option")[0]
+            .classList.add("active");
+          document.getElementById("sipAmountGroup").classList.add("hidden");
+        } else {
+          document
+            .querySelectorAll(".toggle-option")[1]
+            .classList.add("active");
+          document.getElementById("sipAmountGroup").classList.remove("hidden");
+        }
+      }
+
+      /* --- Form Reset --- */
+      function resetForm() {
+        document.getElementById("calculatorForm").reset();
+        setContributionType("onetime");
+        document.getElementById("resultsSection").classList.remove("show");
+        document.getElementById("formulaSection").classList.remove("show");
+        document.getElementById("comparisonSection").classList.add("hidden");
+      }
+
+      /* --- Compound Interest Calculation --- */
+      function calculateCompoundInterest(e) {
+        e.preventDefault();
+
+        // Get values
+        const principal =
+          parseFloat(document.getElementById("principal").value) || 0;
+        const rate = parseFloat(document.getElementById("rate").value) || 0;
+        const time = parseFloat(document.getElementById("time").value) || 0;
+        const freq = parseInt(document.getElementById("frequency").value) || 1;
+        const currency = document.getElementById("currency").value;
+        const comparison = document.getElementById("comparison").value;
+        const sipAmount =
+          parseFloat(document.getElementById("sipAmount").value) || 0;
+
+        let totalInvestment = 0,
+          totalInterest = 0,
+          maturityValue = 0,
+          steps = "";
+
+        if (contributionType === "onetime") {
+          // One-time investment
+          totalInvestment = principal;
+          const r = rate / 100;
+          maturityValue = principal * Math.pow(1 + r / freq, freq * time);
+          totalInterest = maturityValue - principal;
+          steps = `A = P (1 + r/n)^(n × t)<br>
+        = ${formatCurrency(principal, currency)} × (1 + ${r.toFixed(
+            4
+          )}/${freq})<sup>${freq * time}</sup><br>
+        = ${formatCurrency(maturityValue.toFixed(2), currency)}`;
+        } else {
+          // SIP (Recurring)
+          totalInvestment = sipAmount * 12 * time;
+          const r = rate / 100;
+          const n = freq;
+          const t = time;
+          const m = sipAmount;
+          // SIP formula: FV = P × [((1 + r/n)^(n*t) - 1) / (r/n)]
+          maturityValue = m * ((Math.pow(1 + r / n, n * t) - 1) / (r / n));
+          totalInterest = maturityValue - totalInvestment;
+          steps = `A = SIP × [((1 + r/n)^(n × t) - 1) / (r/n)]<br>
+        = ${formatCurrency(m, currency)} × [((1 + ${r.toFixed(4)}/${n})<sup>${
+            n * t
+          }</sup> - 1) / (${r.toFixed(4)}/${n})]<br>
+        = ${formatCurrency(maturityValue.toFixed(2), currency)}`;
+        }
+
+        // Effective Annual Rate (EAR)
+        const EAR = (Math.pow(1 + rate / 100 / freq, freq) - 1) * 100;
+
+        // Update Results
+        document.getElementById("totalInvestment").textContent = formatCurrency(
+          totalInvestment.toFixed(2),
+          currency
+        );
+        document.getElementById("totalInterest").textContent = formatCurrency(
+          totalInterest.toFixed(2),
+          currency
+        );
+        document.getElementById("maturityValue").textContent = formatCurrency(
+          maturityValue.toFixed(2),
+          currency
+        );
+        document.getElementById("effectiveRate").textContent =
+          EAR.toFixed(2) + "%";
+        document.getElementById("resultsSection").classList.add("show");
+        document.getElementById("calculationSteps").innerHTML = steps;
+
+        // Charts
+        renderPieChart(totalInvestment, totalInterest, currency);
+        renderBarChart(time, principal, rate, freq, sipAmount, currency);
+
+        // Comparison
+        if (comparison === "fd") {
+          showFDComparison(
+            principal,
+            sipAmount,
+            time,
+            currency,
+            contributionType
+          );
+        } else if (comparison === "sip") {
+          showSIPComparison(
+            principal,
+            sipAmount,
+            time,
+            currency,
+            contributionType
+          );
+        } else {
+          document.getElementById("comparisonSection").classList.add("hidden");
+        }
+      }
+
+      /* --- Chart.js Pie Chart --- */
+      let pieChart;
+      function renderPieChart(investment, interest, currency) {
+        const ctx = document.getElementById("pieChart").getContext("2d");
+        if (pieChart) pieChart.destroy();
+        pieChart = new Chart(ctx, {
+          type: "pie",
+          data: {
+            labels: ["Principal", "Interest"],
+            datasets: [
+              {
+                data: [investment, interest],
+                backgroundColor: ["#3498db", "#27ae60"],
+              },
+            ],
+          },
+          options: {
+            plugins: {
+              legend: { position: "bottom" },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return (
+                      context.label +
+                      ": " +
+                      formatCurrency(context.parsed, currency)
+                    );
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      /* --- Chart.js Bar Chart --- */
+      let barChart;
+      function renderBarChart(
+        years,
+        principal,
+        rate,
+        freq,
+        sipAmount,
+        currency
+      ) {
+        const ctx = document.getElementById("barChart").getContext("2d");
+        if (barChart) barChart.destroy();
+        let labels = [],
+          data = [],
+          invested = [];
+        let r = rate / 100;
+        let n = freq;
+        let p = principal;
+        let m = sipAmount;
+        let total = 0,
+          totalInv = 0;
+        for (let i = 1; i <= years; i++) {
+          labels.push("Year " + i);
+          if (contributionType === "onetime") {
+            total = p * Math.pow(1 + r / n, n * i);
+            totalInv = p;
+          } else {
+            total = m * ((Math.pow(1 + r / n, n * i) - 1) / (r / n));
+            totalInv = m * 12 * i;
+          }
+          data.push(total);
+          invested.push(totalInv);
+        }
+        barChart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Maturity Value",
+                data: data,
+                backgroundColor: "#27ae60",
+              },
+              {
+                label: "Total Invested",
+                data: invested,
+                backgroundColor: "#3498db",
+              },
+            ],
+          },
+          options: {
+            plugins: {
+              legend: { position: "bottom" },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return (
+                      context.dataset.label +
+                      ": " +
+                      formatCurrency(context.parsed.y, currency)
+                    );
+                  },
+                },
+              },
+            },
+            scales: {
+              y: { beginAtZero: true },
+            },
+          },
+        });
+      }
+
+      /* --- Comparison with FD --- */
+      function showFDComparison(principal, sipAmount, time, currency, type) {
+        let fdRate = 8;
+        let fdValue = 0,
+          fdInvest = 0;
+        if (type === "onetime") {
+          fdValue = principal * Math.pow(1 + fdRate / 100, time);
+          fdInvest = principal;
+        } else {
+          fdValue =
+            sipAmount *
+            ((Math.pow(1 + fdRate / 100, time) - 1) / (fdRate / 100));
+          fdInvest = sipAmount * 12 * time;
+        }
+        let fdInterest = fdValue - fdInvest;
+        let grid = `
+        <div class="result-box">
+            <div class="result-label">FD Investment</div>
+            <div class="result-value">${formatCurrency(
+              fdInvest.toFixed(2),
+              currency
+            )}</div>
+        </div>
+        <div class="result-box">
+            <div class="result-label">FD Interest</div>
+            <div class="result-value">${formatCurrency(
+              fdInterest.toFixed(2),
+              currency
+            )}</div>
+        </div>
+        <div class="result-box">
+            <div class="result-label">FD Maturity Value</div>
+            <div class="result-value">${formatCurrency(
+              fdValue.toFixed(2),
+              currency
+            )}</div>
+        </div>
+    `;
+        document.getElementById("comparisonGrid").innerHTML = grid;
+        document.getElementById("comparisonSection").classList.remove("hidden");
+      }
+
+      /* --- Comparison with SIP --- */
+      function showSIPComparison(principal, sipAmount, time, currency, type) {
+        let sipRate = 10;
+        let sipValue = 0,
+          sipInvest = 0;
+        if (type === "onetime") {
+          sipValue = principal * Math.pow(1 + sipRate / 100, time);
+          sipInvest = principal;
+        } else {
+          sipValue =
+            sipAmount *
+            ((Math.pow(1 + sipRate / 100, time) - 1) / (sipRate / 100));
+          sipInvest = sipAmount * 12 * time;
+        }
+        let sipInterest = sipValue - sipInvest;
+        let grid = `
+        <div class="result-box">
+            <div class="result-label">SIP Investment (10%)</div>
+            <div class="result-value">${formatCurrency(
+              sipInvest.toFixed(2),
+              currency
+            )}</div>
+        </div>
+        <div class="result-box">
+            <div class="result-label">SIP Interest</div>
+            <div class="result-value">${formatCurrency(
+              sipInterest.toFixed(2),
+              currency
+            )}</div>
+        </div>
+        <div class="result-box">
+            <div class="result-label">SIP Maturity Value</div>
+            <div class="result-value">${formatCurrency(
+              sipValue.toFixed(2),
+              currency
+            )}</div>
+        </div>
+    `;
+        document.getElementById("comparisonGrid").innerHTML = grid;
+        document.getElementById("comparisonSection").classList.remove("hidden");
+      }
+
+      /* --- Formula Toggle --- */
+      function toggleFormula() {
+        document.getElementById("formulaSection").classList.toggle("show");
+      }
+
+      /* --- Share Calculator (Web Share API) --- */
+      function shareCalculator() {
+        if (navigator.share) {
+          navigator.share({
+            title: document.title,
+            text: "Check out this Compound Interest Calculator!",
+            url: window.location.href,
+          });
+        } else {
+          alert("Sharing not supported on this browser.");
+        }
+      }
+
+      /* --- Download PDF (Dummy) --- */
+      function downloadPDF() {
+        alert("PDF download feature coming soon!");
+      }
+
+      /* --- Download Report (Dummy) --- */
+      function downloadReport() {
+        alert("Report download feature coming soon!");
+      }
+
+      /* --- Theme Toggle (Light/Dark) --- */
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+        if (document.body.classList.contains("dark-mode")) {
+          document.body.style.background = "#23272f";
+          document.body.style.color = "#eee";
+          document
+            .querySelectorAll(".card")
+            .forEach((card) => (card.style.background = "#2c313a"));
+        } else {
+          document.body.style.background = "#e0e5ec";
+          document.body.style.color = "#333";
+          document
+            .querySelectorAll(".card")
+            .forEach((card) => (card.style.background = "#e0e5ec"));
+        }
+      }
+
+      /* --- Tooltip (Simple) --- */
+      document.querySelectorAll(".tooltip").forEach((tip) => {
+        tip.addEventListener("mouseenter", function () {
+          let txt = tip.getAttribute("data-tip");
+          if (!txt) return;
+          let div = document.createElement("div");
+          div.className = "tip-popup";
+          div.textContent = txt;
+          div.style.position = "absolute";
+          div.style.background = "#fff";
+          div.style.color = "#333";
+          div.style.border = "1px solid #aaa";
+          div.style.padding = "6px 12px";
+          div.style.borderRadius = "8px";
+          div.style.boxShadow = "2px 2px 8px #aaa";
+          div.style.fontSize = "13px";
+          div.style.zIndex = 9999;
+          div.style.top =
+            tip.getBoundingClientRect().top + window.scrollY + 25 + "px";
+          div.style.left =
+            tip.getBoundingClientRect().left + window.scrollX - 10 + "px";
+          div.classList.add("tip-popup");
+          document.body.appendChild(div);
+          tip._popup = div;
+        });
+        tip.addEventListener("mouseleave", function () {
+          if (tip._popup) document.body.removeChild(tip._popup);
+          tip._popup = null;
+        });
+      });
+
+      /* --- Form Submit --- */
+      document
+        .getElementById("calculatorForm")
+        .addEventListener("submit", calculateCompoundInterest);
+
+      /* --- Initial State --- */
+      setContributionType("onetime");
+    </script>
+  </body>
+</html>
